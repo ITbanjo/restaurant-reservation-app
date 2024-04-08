@@ -1,7 +1,8 @@
 const service = require("./reservations.service");
 
 async function list(req, res) {
-  const reservations = await service.list();
+  const date = req.query.date;
+  const reservations = await service.getReservationsForSpecifiedDate(date);
   res.json({ data: reservations });
 }
 
