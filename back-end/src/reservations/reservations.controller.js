@@ -14,6 +14,7 @@ async function create(req, res) {
       mobile_number,
       reservation_date,
       reservation_time,
+      people,
     } = {},
   } = req.body;
   const newReservation = {
@@ -22,6 +23,7 @@ async function create(req, res) {
     mobile_number: mobile_number,
     reservation_date: reservation_date,
     reservation_time: reservation_time,
+    people: people,
   };
   const create = await service.create(newReservation);
   res.status(201).json({ data: create[0] });
