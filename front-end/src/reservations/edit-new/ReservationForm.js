@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link, useHistory, useParams } from "react-router-dom";
+import React from "react";
+import { useHistory } from "react-router-dom";
 import { createReservation } from "../../utils/api";
 
 function ReservationForm({
@@ -10,10 +10,17 @@ function ReservationForm({
   const history = useHistory();
 
   function handleChange(event) {
-    setNewReservation({
-      ...newReservation,
-      [event.target.name]: event.target.value,
-    });
+    if (event.target.name === "people") {
+      setNewReservation({
+        ...newReservation,
+        [event.target.name]: Number(event.target.value),
+      });
+    } else {
+      setNewReservation({
+        ...newReservation,
+        [event.target.name]: event.target.value,
+      });
+    }
   }
 
   async function handleSubmit(event) {
@@ -21,10 +28,15 @@ function ReservationForm({
     try {
       await createReservation(newReservation);
       setNewReservation(emptyReservationData);
-      history.push(`/dashboard`);
+      history.push(`/dashboard?date=${newReservation.reservation_date}`);
     } catch (error) {
       throw error;
     }
+  }
+
+  function handleCancel() {
+    setNewReservation(emptyReservationData);
+    history.goBack();
   }
 
   return (
@@ -57,7 +69,9 @@ function ReservationForm({
           id="mobile_number"
           value={newReservation.mobile_number}
           name="mobile_number"
-          placeholder="Mobile Number"
+          type="tel"
+          placeholder="xxx-xxx-xxxx"
+          pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
           className="form-control"
           onChange={handleChange}
         ></input>
@@ -68,7 +82,9 @@ function ReservationForm({
           id="reservation_date"
           value={newReservation.reservation_date}
           name="reservation_date"
-          placeholder="Reservation Date"
+          type="date"
+          placeholder="YYYY-MM-DD"
+          pattern="\d{4}-\d{2}-\d{2}"
           className="form-control"
           onChange={handleChange}
         ></input>
@@ -79,7 +95,9 @@ function ReservationForm({
           id="reservation_time"
           value={newReservation.reservation_time}
           name="reservation_time"
-          placeholder="Reservation Time"
+          type="time"
+          placeholder="HH:MM"
+          pattern="[0-9]{2}:[0-9]{2}"
           className="form-control"
           onChange={handleChange}
         ></input>
@@ -90,6 +108,7 @@ function ReservationForm({
           id="people"
           value={newReservation.people}
           name="people"
+          type="number"
           placeholder="Number of Guests"
           className="form-control"
           onChange={handleChange}
@@ -97,9 +116,10 @@ function ReservationForm({
       </div>
 
       <div>
-        <Link>
-          <button className="btn btn-secondary mr-1">Cancel</button>
-        </Link>
+        <button onClick={handleCancel} className="btn btn-secondary mr-1">
+          Cancel
+        </button>
+
         <button type="submit" className="btn btn-primary">
           Submit
         </button>

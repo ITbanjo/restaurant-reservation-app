@@ -15,6 +15,13 @@ function Dashboard({ date }) {
   const [reservations, setReservations] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
   const history = useHistory();
+  const dashboardDate = new Date(date).toLocaleDateString("en-us", {
+    timeZone: "UTC",
+    weekday: "long",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
 
   useEffect(loadDashboard, [date]);
 
@@ -51,23 +58,33 @@ function Dashboard({ date }) {
   }
   return (
     <main>
-      <h1>Dashboard</h1>
-      <div className="d-md-flex mb-3">
-        <h4 className="mb-0">Reservations for date</h4>
+      <div className="col-md-10">
+        <h1 className="mt-3">Dashboard</h1>
+        <div className="d-md-flex mb-3">
+          <h4 className="mb-0">Reservations for {dashboardDate}</h4>
+        </div>
+        <ErrorAlert error={reservationsError} />
+
+        <div className="mb-2 ">
+          <button
+            className="btn btn-dark mr-2"
+            onClick={handleClick}
+            id="previous"
+          >
+            Previous Day
+          </button>
+          <button className="btn btn-dark" onClick={handleClick} id="next">
+            Next Day
+          </button>
+          <div className="float-right">
+            <button className="btn btn-dark" onClick={handleClick} id="today">
+              Today
+            </button>
+          </div>
+        </div>
+
+        <ReservationList reservations={reservations} />
       </div>
-      <ErrorAlert error={reservationsError} />
-
-      <button onClick={handleClick} id="previous">
-        Previous Day
-      </button>
-      <button onClick={handleClick} id="today">
-        Today
-      </button>
-      <button onClick={handleClick} id="next">
-        Next Day
-      </button>
-
-      <ReservationList reservations={reservations} />
     </main>
   );
 }
