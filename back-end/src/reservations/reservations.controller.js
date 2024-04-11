@@ -51,6 +51,7 @@ function peopleIsInt(req, res, next) {
   });
 }
 
+//Helper function for listForSpecifiedDate to give default date if NULL value is passed
 function asDateString(date) {
   return `${date.getFullYear().toString(10)}-${(date.getMonth() + 1)
     .toString(10)
