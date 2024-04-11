@@ -30,6 +30,12 @@ function Dashboard({ date }) {
     setReservationsError(null);
     listReservations({ date }, abortController.signal)
       .then(setReservations)
+      .then(
+        history.push({
+          pathname: "/dashboard",
+          search: `?date=${date}`,
+        })
+      )
       .catch(setReservationsError);
     return () => abortController.abort();
   }
