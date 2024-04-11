@@ -59,8 +59,8 @@ function asDateString(date) {
 }
 
 async function listForSpecifiedDate(req, res) {
-  const today = asDateString(new Date());
-  const date = req.query.date || today;
+  //const today = asDateString(new Date());
+  const date = req.query.date;
   const reservations = await service.getReservationsForSpecifiedDate(date);
   res.json({ data: reservations });
 }
