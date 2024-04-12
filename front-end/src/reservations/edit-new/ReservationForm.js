@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { createReservation } from "../../utils/api";
 import ErrorAlert from "../../layout/ErrorAlert";
-import { today } from "../../utils/date-time";
 
 function ReservationForm({
   emptyReservationData,
@@ -23,19 +22,31 @@ function ReservationForm({
         ...newReservation,
         [event.target.name]: event.target.value,
       });
+      if (event.target.name === "reservation_date") {
+        handleDateInputValidation(event.target.value);
+      }
     }
   }
 
-  // function setDateErrors(date) {
-  //   const todayValue = Date.parse(new Date().toUTCString().slice(0, 16));
-  //   const resDateValue = Date.parse(
-  //     new Date(reservation_date).toUTCString().slice(0, 16)
-  //   );
-  //   const getWeekdayName = new Date(date).toUTCString().slice(0, 3);
-  //   if (resDateValue < todayValue) {
-  //     setErrorMessage()
-  //   }
-  // }
+  function handleDateInputValidation(date) {
+    const todayValue = Date.parse(new Date().toUTCString().slice(0, 16));
+    const resDateValue = Date.parse(new Date(date).toUTCString().slice(0, 16));
+    const getWeekdayName = new Date(date).toUTCString().slice(0, 3);
+
+    if (resDateValue < todayValue && getWeekdayName === "Tue") {
+      setErrorMessage({
+        message: `Reservation cannot be made on a Tuesday and Reservation must be on a future date.`,
+      });
+    } else if (resDateValue < todayValue) {
+      setErrorMessage({ message: "Reservation must be on a future date." });
+    } else if (getWeekdayName === "Tue") {
+      setErrorMessage({
+        message: "Reservation cannot be made on a Tuesday.",
+      });
+    } else {
+      setErrorMessage(null);
+    }
+  }
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -44,7 +55,7 @@ function ReservationForm({
       setNewReservation(emptyReservationData);
       history.push(`/dashboard?date=${newReservation.reservation_date}`);
     } catch (error) {
-      setErrorMessage(error);
+      throw error;
     }
   }
 
