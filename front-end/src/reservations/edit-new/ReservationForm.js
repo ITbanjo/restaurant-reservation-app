@@ -35,7 +35,7 @@ function ReservationForm({
 
     if (resDateValue < todayValue && getWeekdayName === "Tue") {
       setErrorMessage({
-        message: `Reservation cannot be made on a Tuesday and Reservation must be on a future date.`,
+        message: `Reservation cannot be made on a Tuesday and must also be on a future date.`,
       });
     } else if (resDateValue < todayValue) {
       setErrorMessage({ message: "Reservation must be on a future date." });
