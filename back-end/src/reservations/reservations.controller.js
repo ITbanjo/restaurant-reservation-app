@@ -51,6 +51,35 @@ function peopleIsInt(req, res, next) {
   });
 }
 
+function dateIsOnDayOpenForBusiness(req, res, next) {
+  const { data: { reservation_date } = {} } = req.body;
+  const getWeekdayName = new Date(reservation_date).toUTCString().slice(0, 3);
+
+  if (getWeekdayName != "Tue") {
+    return next();
+  }
+  next({
+    status: 400,
+    message: `Periodic Tables is closed on Tuesdays. Please choose another day.`,
+  });
+}
+
+function dateIsInFuture(req, res, next) {
+  const { data: { reservation_date } = {} } = req.body;
+  const todayValue = Date.parse(new Date().toUTCString().slice(0, 16));
+  const resDateValue = Date.parse(
+    new Date(reservation_date).toUTCString().slice(0, 16)
+  );
+
+  if (resDateValue >= todayValue) {
+    return next();
+  }
+  next({
+    status: 400,
+    message: `Reservation_date cannot be a past date. Please choose a future date`,
+  });
+}
+
 //Helper function for listForSpecifiedDate to give default date if NULL value is passed
 function asDateString(date) {
   return `${date.getFullYear().toString(10)}-${(date.getMonth() + 1)
@@ -100,6 +129,8 @@ module.exports = {
     dateIsValid,
     timeIsValid,
     peopleIsInt,
+    dateIsOnDayOpenForBusiness,
+    dateIsInFuture,
     asyncErrorBoundary(create),
   ],
 };
