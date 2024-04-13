@@ -1,6 +1,14 @@
 const service = require("./reservations.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 
+//Helper function for listForSpecifiedDate to give default date if NULL value is passed
+function asDateString(date) {
+  return `${date.getFullYear().toString(10)}-${(date.getMonth() + 1)
+    .toString(10)
+    .padStart(2, "0")}-${date.getDate().toString(10).padStart(2, "0")}`;
+}
+
+//input validation functions
 function bodyDataHas(propertyName) {
   return function (req, res, next) {
     const { data = {} } = req.body;
@@ -53,9 +61,9 @@ function peopleIsInt(req, res, next) {
 
 function dateIsOnDayOpenForBusiness(req, res, next) {
   const { data: { reservation_date } = {} } = req.body;
-  const getWeekdayName = new Date(reservation_date).toUTCString().slice(0, 3);
+  const weekdayName = new Date(reservation_date).toUTCString().slice(0, 3);
 
-  if (getWeekdayName != "Tue") {
+  if (weekdayName != "Tue") {
     return next();
   }
   next({
@@ -64,29 +72,64 @@ function dateIsOnDayOpenForBusiness(req, res, next) {
   });
 }
 
-function dateIsInFuture(req, res, next) {
-  const { data: { reservation_date } = {} } = req.body;
-  const todayValue = Date.parse(new Date().toUTCString().slice(0, 16));
-  const resDateValue = Date.parse(
-    new Date(reservation_date).toUTCString().slice(0, 16)
-  );
+function timeIsAfterOpening(req, res, next) {
+  const { data: { reservation_time } = {} } = req.body;
+  const resHours = Number(reservation_time.slice(0, 2));
+  const resMinutes = Number(reservation_time.slice(3, 5));
+  res.locals.resHours = resHours;
+  res.locals.resMinutes = resMinutes;
 
-  if (resDateValue >= todayValue) {
-    return next();
-  }
+  if (resHours > 10) return next();
+  if (resHours === 10 && resMinutes >= 30) return next();
+
   next({
     status: 400,
-    message: `Reservation_date cannot be a past date. Please choose a future date`,
+    message: `Reservation cannot be set before 10:30 AM`,
   });
 }
 
-//Helper function for listForSpecifiedDate to give default date if NULL value is passed
-function asDateString(date) {
-  return `${date.getFullYear().toString(10)}-${(date.getMonth() + 1)
-    .toString(10)
-    .padStart(2, "0")}-${date.getDate().toString(10).padStart(2, "0")}`;
+function timeIsHourBeforeClosing(req, res, next) {
+  const { resHours, resMinutes } = res.locals;
+
+  if (resHours < 21) return next();
+  if (resHours === 21 && resMinutes <= 30) return next();
+
+  next({
+    status: 400,
+    message: `Reservation cannot be set after 9:30 PM`,
+  });
 }
 
+function dateAndTimeInFuture(req, res, next) {
+  const { data: { reservation_date } = {} } = req.body;
+  const { resHours, resMinutes } = res.locals;
+
+  const todayDate = asDateString(new Date());
+  const todayValue = Date.parse(todayDate);
+  const resDateValue = Date.parse(reservation_date);
+
+  const todayDateTime = new Date().toLocaleTimeString("it-IT");
+  const todayHours = Number(todayDateTime.slice(0, 2));
+  const todayMinutes = Number(todayDateTime.slice(3, 5));
+
+  if (resDateValue > todayValue) {
+    return next();
+  }
+  if (resDateValue === todayValue) {
+    if (resHours > todayHours) return next();
+    if (resHours === todayHours && resMinutes > todayMinutes) return next();
+    next({
+      status: 400,
+      message: `Reservation_time cannot be a past time. Please choose a future time.`,
+    });
+  }
+  next({
+    status: 400,
+    message: `Reservation_date cannot be a past date. Please choose a future date.`,
+  });
+}
+
+//middleware functions
 async function listForSpecifiedDate(req, res) {
   const today = asDateString(new Date());
   const date = req.query.date || today;
@@ -130,7 +173,9 @@ module.exports = {
     timeIsValid,
     peopleIsInt,
     dateIsOnDayOpenForBusiness,
-    dateIsInFuture,
+    timeIsAfterOpening,
+    timeIsHourBeforeClosing,
+    dateAndTimeInFuture,
     asyncErrorBoundary(create),
   ],
 };

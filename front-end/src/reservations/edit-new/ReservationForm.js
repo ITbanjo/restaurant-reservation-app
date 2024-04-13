@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { createReservation } from "../../utils/api";
 import ErrorAlert from "../../layout/ErrorAlert";
+import { usePhoneInput } from "@react-awesome/phone-input";
 
 function ReservationForm({
   emptyReservationData,
@@ -17,6 +18,11 @@ function ReservationForm({
         ...newReservation,
         [event.target.name]: Number(event.target.value),
       });
+    } else if (event.target.name === "use-phone-input") {
+      setNewReservation({
+        ...newReservation,
+        mobile_number: event.target.value,
+      });
     } else {
       setNewReservation({
         ...newReservation,
@@ -27,6 +33,14 @@ function ReservationForm({
       }
     }
   }
+
+  const { register } = usePhoneInput({
+    mode: "national",
+    defaultCountry: "US",
+    onChange: (event) => {
+      handleChange(event);
+    },
+  });
 
   function handleDateInputValidation(date) {
     const todayValue = Date.parse(new Date().toUTCString().slice(0, 16));
@@ -51,10 +65,18 @@ function ReservationForm({
   async function handleSubmit(event) {
     event.preventDefault();
     try {
-      await createReservation(newReservation);
+      const formattedNumber = newReservation.mobile_number
+        .replace(/[^+\d]+/g, "")
+        .replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3");
+      const formattedReservation = {
+        ...newReservation,
+        mobile_number: formattedNumber,
+      };
+      await createReservation(formattedReservation);
       setNewReservation(emptyReservationData);
       history.push(`/dashboard?date=${newReservation.reservation_date}`);
     } catch (error) {
+      setErrorMessage(error);
       throw error;
     }
   }
@@ -96,11 +118,11 @@ function ReservationForm({
             id="mobile_number"
             value={newReservation.mobile_number}
             name="mobile_number"
-            type="tel"
+            //type="tel"
             placeholder="xxx-xxx-xxxx"
-            pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+            maxLength={14}
             className="form-control"
-            onChange={handleChange}
+            {...register("use-phone-input")}
           ></input>
         </div>
         <div className="form-group">
