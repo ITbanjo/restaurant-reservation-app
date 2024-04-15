@@ -15,36 +15,46 @@ function ReservationForm({
     if (event.target.name === "people") {
       setNewReservation({
         ...newReservation,
-        [event.target.name]: Number(event.target.value),
+        [event.target.name]: Number(event.target.value), //people input set to int
+      });
+    } else if (event.target.name === "mobile_number") {
+      setNewReservation({
+        ...newReservation,
+        [event.target.name]: formatPhoneNumber(event.target.value), //phone input formatting
       });
     } else {
       setNewReservation({
         ...newReservation,
         [event.target.name]: event.target.value,
       });
-      if (event.target.name === "reservation_date") {
-        handleDateInputValidation(event.target.value);
-      }
     }
   }
 
-  function handleDateInputValidation(date) {
+  function formatPhoneNumber(value) {
+    if (!value) return value;
+    const phoneNumber = value.replace(/[^\d]/g, "");
+    const phoneNumberLength = phoneNumber.length;
+    if (phoneNumberLength <= 3) return phoneNumber;
+    if (phoneNumberLength <= 6) {
+      return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(3)}`;
+    }
+    return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(
+      3,
+      6
+    )}-${phoneNumber.slice(6, 10)}`;
+  }
+
+  function handleDateErrors(date, backendError) {
     const todayValue = Date.parse(new Date().toUTCString().slice(0, 16));
     const resDateValue = Date.parse(new Date(date).toUTCString().slice(0, 16));
-    const getWeekdayName = new Date(date).toUTCString().slice(0, 3);
+    const weekdayName = new Date(date).toUTCString().slice(0, 3);
 
-    if (resDateValue < todayValue && getWeekdayName === "Tue") {
+    if (resDateValue < todayValue && weekdayName === "Tue") {
       setErrorMessage({
-        message: `Reservation cannot be made on a Tuesday and must also be on a future date.`,
-      });
-    } else if (resDateValue < todayValue) {
-      setErrorMessage({ message: "Reservation must be on a future date." });
-    } else if (getWeekdayName === "Tue") {
-      setErrorMessage({
-        message: "Reservation cannot be made on a Tuesday.",
+        message: `Reservation cannot be made on a Tuesday and must also be set on a future date.`,
       });
     } else {
-      setErrorMessage(null);
+      setErrorMessage(backendError);
     }
   }
 
@@ -55,7 +65,8 @@ function ReservationForm({
       setNewReservation(emptyReservationData);
       history.push(`/dashboard?date=${newReservation.reservation_date}`);
     } catch (error) {
-      throw error;
+      // display both past-date and Tuesday errors at once if necesarry
+      handleDateErrors(newReservation.reservation_date, error);
     }
   }
 
@@ -98,7 +109,7 @@ function ReservationForm({
             name="mobile_number"
             type="tel"
             placeholder="xxx-xxx-xxxx"
-            pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+            maxLength={14}
             className="form-control"
             onChange={handleChange}
           ></input>
