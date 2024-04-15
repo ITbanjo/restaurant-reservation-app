@@ -3,6 +3,7 @@ const knex = require("../db/connection");
 function getReservationsForSpecifiedDate(date) {
   return knex("reservations")
     .distinct(
+      "reservation_id",
       "first_name",
       "last_name",
       "mobile_number",

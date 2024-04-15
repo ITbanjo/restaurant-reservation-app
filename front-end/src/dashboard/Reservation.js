@@ -1,6 +1,15 @@
 import React from "react";
 
 function Reservation({ reservation }) {
+  const {
+    reservation_id,
+    first_name,
+    last_name,
+    mobile_number,
+    people,
+    reservation_time,
+  } = reservation;
+
   function timeFormatter(time) {
     const hours = time.substr(0, 2);
     const minutes = time.substr(3, 2);
@@ -14,25 +23,26 @@ function Reservation({ reservation }) {
   }
 
   return (
-    <div className="card" key={reservation.reservation_id}>
+    <div className="card rounded-0" key={reservation_id}>
       <div className="card-body">
         <h4 className="card-title font-weight-bold">
-          {timeFormatter(reservation.reservation_time)}
+          {timeFormatter(reservation_time)}
         </h4>
         <p>
           Name:{" "}
           <span className="font-weight-bold">
-            {reservation.last_name}, {reservation.first_name}
+            {last_name}, {first_name}
           </span>
         </p>
         <p>
-          Phone:{" "}
-          <span className="font-weight-bold">{reservation.mobile_number}</span>
+          Phone: <span className="font-weight-bold">{mobile_number}</span>
         </p>
         <p>
-          Party Size:{" "}
-          <span className="font-weight-bold">{reservation.people}</span>
+          Party Size: <span className="font-weight-bold">{people}</span>
         </p>
+        <a href={`/reservations/${reservation_id}/seat`}>
+          <button className="btn btn-success btn-lg">Seat</button>
+        </a>
       </div>
     </div>
   );
