@@ -129,12 +129,25 @@ function dateAndTimeInFuture(req, res, next) {
   });
 }
 
+async function reservationExists(req, res, next) {
+  const reservation = await service.read(req.params.reservation_id);
+  if (reservation) {
+    res.locals.reservation = reservation;
+    return next();
+  }
+  next({ status: 404, message: `Reservation cannot be found.` });
+}
+
 //middleware functions
 async function listForSpecifiedDate(req, res) {
   const today = asDateString(new Date());
   const date = req.query.date || today;
   const reservations = await service.getReservationsForSpecifiedDate(date);
   res.json({ data: reservations });
+}
+
+function read(req, res) {
+  res.json({ data: res.locals.reservation });
 }
 
 async function create(req, res) {
@@ -162,6 +175,7 @@ async function create(req, res) {
 
 module.exports = {
   listForSpecifiedDate: [asyncErrorBoundary(listForSpecifiedDate)],
+  read: [asyncErrorBoundary(reservationExists), read],
   create: [
     bodyDataHas("first_name"),
     bodyDataHas("last_name"),
