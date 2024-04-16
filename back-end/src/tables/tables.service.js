@@ -13,8 +13,17 @@ function read(id) {
     .first();
 }
 
-// function readTableReservation() {
-//     return knex("tables as t").join("reservations as r", "r.reservation_id", "t.reservation_id").select("*").where()
+// function getTablesToAccomodateSizeOfParty(reservation_id) {
+//   return knex("tables as t")
+//     .leftJoin("reservations as r", "r.reservation_id", "t.reservation_id")
+//     .select(
+//       "table_id",
+//       "table_name",
+//       "capacity",
+//       "r.reservation_id",
+//       "r.people"
+//     )
+//     .where("t.capacity", ">=", "r.people");
 // }
 
 function create(newTable) {

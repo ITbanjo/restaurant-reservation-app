@@ -98,8 +98,7 @@ async function tableExists(req, res, next) {
 }
 
 async function list(req, res) {
-  const tables = await service.getTables();
-  res.json({ data: tables });
+  res.json({ data: await service.getTables() });
 }
 
 async function create(req, res) {
