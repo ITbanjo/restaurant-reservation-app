@@ -2,19 +2,17 @@ const service = require("./reservations.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 
 //Helper function for listForSpecifiedDate to give default date if NULL value is passed
-// function asDateString(date) {
-//   return `${date.getFullYear().toString(10)}-${(date.getMonth() + 1)
-//     .toString(10)
-//     .padStart(2, "0")}-${date.getDate().toString(10).padStart(2, "0")}`;
-// }
-
 function asDateString(date) {
   return `${date.getFullYear().toString(10)}-${(date.getMonth() + 1)
     .toString(10)
-    .padStart(2, "0")}-${date.getDate().toString(10).padStart(2, "0")}T${date
-    .getHours()
+    .padStart(2, "0")}-${date.getDate().toString(10).padStart(2, "0")}`;
+}
+
+function asTimeString(date) {
+  return `${date.getHours().toString(10).padStart(2, "0")}:${date
+    .getMinutes()
     .toString(10)
-    .padStart(2, "0")}:${date.getMinutes().toString(10).padStart(2, "0")}`;
+    .padStart(2, "0")}`;
 }
 
 //input validation functions
@@ -112,14 +110,16 @@ function timeIsHourBeforeClosing(req, res, next) {
 function dateAndTimeInFuture(req, res, next) {
   const { data: { reservation_date } = {} } = req.body;
   const { resHours, resMinutes } = res.locals;
+  const newDate = new Date();
 
-  const todayDate = asDateString(new Date());
+  const todayDate = asDateString(newDate);
+  const todayTime = asTimeString(newDate);
   const todayValue = Date.parse(todayDate);
   const resDateValue = Date.parse(reservation_date);
 
-  const todayDateTime = new Date().toLocaleTimeString("it-IT");
-  const todayHours = Number(todayDateTime.slice(0, 2));
-  const todayMinutes = Number(todayDateTime.slice(3, 5));
+  //const todayDateTime = new Date().toLocaleTimeString("it-IT");
+  const todayHours = Number(todayTime.slice(0, 2));
+  const todayMinutes = Number(todayTime.slice(3, 5));
 
   if (resDateValue > todayValue) {
     return next();
@@ -144,7 +144,10 @@ async function reservationExists(req, res, next) {
     res.locals.reservation = reservation;
     return next();
   }
-  next({ status: 404, message: `Reservation cannot be found.` });
+  next({
+    status: 404,
+    message: `Reservation ${req.params.reservation_id} cannot be found.`,
+  });
 }
 
 //middleware functions
