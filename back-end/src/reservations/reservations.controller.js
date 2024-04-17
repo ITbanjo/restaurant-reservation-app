@@ -120,7 +120,7 @@ function dateAndTimeInFuture(req, res, next) {
     if (resHours === todayHours && resMinutes > todayMinutes) return next();
     next({
       status: 400,
-      message: `Reservation_time cannot be a past time. Please choose a future time.`,
+      message: `Reservation_time cannot be a past time. Please choose a future time. reservation_date=${reservation_date} todayDate=${todayDate} resHoursMins=${resHours}:${resMinutes} todayHoursMins=${todayHours}:${todayMinutes}`,
     });
   }
   next({
