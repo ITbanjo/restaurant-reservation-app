@@ -8,12 +8,12 @@ function asDateString(date) {
     .padStart(2, "0")}-${date.getDate().toString(10).padStart(2, "0")}`;
 }
 
-function asTimeString(date) {
-  return `${date.getHours().toString(10).padStart(2, "0")}:${date
-    .getMinutes()
-    .toString(10)
-    .padStart(2, "0")}`;
-}
+// function asTimeString(date) {
+//   return `${date.getHours().toString(10).padStart(2, "0")}:${date
+//     .getMinutes()
+//     .toString(10)
+//     .padStart(2, "0")}`;
+// }
 
 //input validation functions
 function bodyDataHas(propertyName) {
@@ -108,18 +108,15 @@ function timeIsHourBeforeClosing(req, res, next) {
 }
 
 function dateAndTimeInFuture(req, res, next) {
-  const { data: { reservation_date } = {} } = req.body;
+  const { data: { reservation_date, currentDate, currentTime } = {} } =
+    req.body;
   const { resHours, resMinutes } = res.locals;
-  const newDate = new Date();
 
-  const todayDate = asDateString(newDate);
-  const todayTime = asTimeString(newDate);
-  const todayValue = Date.parse(todayDate);
+  const todayValue = Date.parse(currentDate);
   const resDateValue = Date.parse(reservation_date);
 
-  //const todayDateTime = new Date().toLocaleTimeString("it-IT");
-  const todayHours = Number(todayTime.slice(0, 2));
-  const todayMinutes = Number(todayTime.slice(3, 5));
+  const todayHours = Number(currentTime.slice(0, 2));
+  const todayMinutes = Number(currentTime.slice(3, 5));
 
   if (resDateValue > todayValue) {
     return next();
@@ -129,7 +126,7 @@ function dateAndTimeInFuture(req, res, next) {
     if (resHours === todayHours && resMinutes > todayMinutes) return next();
     next({
       status: 400,
-      message: `Reservation_time cannot be a past time. Please choose a future time. reservation_date=${reservation_date} todayDate=${todayDate} resHoursMins=${resHours}:${resMinutes} todayHoursMins=${todayHours}:${todayMinutes}`,
+      message: `Reservation_time cannot be a past time. Please choose a future time. reservation_date=${reservation_date} todayDate=${currentDate} resHoursMins=${resHours}:${resMinutes} todayHoursMins=${todayHours}:${todayMinutes}`,
     });
   }
   next({
