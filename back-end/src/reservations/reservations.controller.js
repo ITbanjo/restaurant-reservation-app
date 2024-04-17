@@ -1,20 +1,6 @@
 const service = require("./reservations.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 
-//Helper function for listForSpecifiedDate to give default date if NULL value is passed
-function asDateString(date) {
-  return `${date.getFullYear().toString(10)}-${(date.getMonth() + 1)
-    .toString(10)
-    .padStart(2, "0")}-${date.getDate().toString(10).padStart(2, "0")}`;
-}
-
-// function asTimeString(date) {
-//   return `${date.getHours().toString(10).padStart(2, "0")}:${date
-//     .getMinutes()
-//     .toString(10)
-//     .padStart(2, "0")}`;
-// }
-
 //input validation functions
 function bodyDataHas(propertyName) {
   return function (req, res, next) {
@@ -149,8 +135,7 @@ async function reservationExists(req, res, next) {
 
 //middleware functions
 async function listForSpecifiedDate(req, res) {
-  const today = asDateString(new Date());
-  const date = req.query.date || today;
+  const date = req.query.date || "NODATE";
   const reservations = await service.getReservationsForSpecifiedDate(date);
   res.json({ data: reservations });
 }
