@@ -2,10 +2,19 @@ const service = require("./reservations.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 
 //Helper function for listForSpecifiedDate to give default date if NULL value is passed
+// function asDateString(date) {
+//   return `${date.getFullYear().toString(10)}-${(date.getMonth() + 1)
+//     .toString(10)
+//     .padStart(2, "0")}-${date.getDate().toString(10).padStart(2, "0")}`;
+// }
+
 function asDateString(date) {
   return `${date.getFullYear().toString(10)}-${(date.getMonth() + 1)
     .toString(10)
-    .padStart(2, "0")}-${date.getDate().toString(10).padStart(2, "0")}`;
+    .padStart(2, "0")}-${date.getDate().toString(10).padStart(2, "0")}T${date
+    .getHours()
+    .toString(10)
+    .padStart(2, "0")}:${date.getMinutes().toString(10).padStart(2, "0")}`;
 }
 
 //input validation functions
