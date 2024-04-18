@@ -94,30 +94,21 @@ function timeIsHourBeforeClosing(req, res, next) {
 }
 
 function dateAndTimeInFuture(req, res, next) {
-  const { data: { reservation_date, currentDate, currentTime } = {} } =
-    req.body;
+  const { data: { reservation_date } = {} } = req.body;
   const { resHours, resMinutes } = res.locals;
 
-  const todayValue = Date.parse(currentDate);
-  const resDateValue = Date.parse(reservation_date);
+  const todayDate = new Date();
+  const resDate = new Date(
+    Date.parse(`${reservation_date}T${resHours}:${resMinutes}:00.000Z`) +
+      todayDate.getTimezoneOffset() * 60 * 1000
+  );
 
-  const todayHours = Number(currentTime.slice(0, 2));
-  const todayMinutes = Number(currentTime.slice(3, 5));
-
-  if (resDateValue > todayValue) {
+  if (Date.parse(resDate) > Date.parse(todayDate)) {
     return next();
-  }
-  if (resDateValue === todayValue) {
-    if (resHours > todayHours) return next();
-    if (resHours === todayHours && resMinutes > todayMinutes) return next();
-    next({
-      status: 400,
-      message: `Reservation_time cannot be a past time. Please choose a future time. reservation_date=${reservation_date} todayDate=${currentDate} resHoursMins=${resHours}:${resMinutes} todayHoursMins=${todayHours}:${todayMinutes}`,
-    });
   }
   next({
     status: 400,
-    message: `Reservation_date cannot be a past date. Please choose a future date.`,
+    message: `Date/Time combination cannot be in the past. Please choose a future Date/Time.`,
   });
 }
 
