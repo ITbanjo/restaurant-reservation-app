@@ -101,10 +101,9 @@ function dateAndTimeInFuture(req, res, next) {
   const todayDate = todayDateRaw.toUTCString();
   const resDate = new Date(
     new Date(
-      `${reservation_date}T${resHours.padStart(2, "0")}:${resMinutes.padStart(
-        2,
-        "0"
-      )}:00.000Z`
+      `${reservation_date}T${resHours.toString().padStart(2, "0")}:${resMinutes
+        .toString()
+        .padStart(2, "0")}:00.000Z`
     ).getTime() +
       todayDateRaw.getTimezoneOffset() * 60 * 1000
   ).toUTCString();
