@@ -1,13 +1,6 @@
 const service = require("./reservations.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 
-//Helper function for listForSpecifiedDate to give default date if NULL value is passed
-function asDateString(date) {
-  return `${date.getFullYear().toString(10)}-${(date.getMonth() + 1)
-    .toString(10)
-    .padStart(2, "0")}-${date.getDate().toString(10).padStart(2, "0")}`;
-}
-
 //input validation functions
 function bodyDataHas(propertyName) {
   return function (req, res, next) {
@@ -101,16 +94,20 @@ function timeIsHourBeforeClosing(req, res, next) {
 }
 
 function dateAndTimeInFuture(req, res, next) {
-  const { data: { reservation_date } = {} } = req.body;
+  const {
+    data: {
+      reservation_date,
+      currentDate = "2024-04-18",
+      currentTime = "12:00",
+    } = {},
+  } = req.body;
   const { resHours, resMinutes } = res.locals;
 
-  const todayDate = asDateString(new Date());
-  const todayValue = Date.parse(todayDate);
+  const todayValue = Date.parse(currentDate);
   const resDateValue = Date.parse(reservation_date);
 
-  const todayDateTime = new Date().toLocaleTimeString("it-IT");
-  const todayHours = Number(todayDateTime.slice(0, 2));
-  const todayMinutes = Number(todayDateTime.slice(3, 5));
+  const todayHours = Number(currentTime.slice(0, 2));
+  const todayMinutes = Number(currentTime.slice(3, 5));
 
   if (resDateValue > todayValue) {
     return next();
@@ -120,7 +117,7 @@ function dateAndTimeInFuture(req, res, next) {
     if (resHours === todayHours && resMinutes > todayMinutes) return next();
     next({
       status: 400,
-      message: `Reservation_time cannot be a past time. Please choose a future time.`,
+      message: `Reservation_time cannot be a past time. Please choose a future time. reservation_date=${reservation_date} todayDate=${currentDate} resHoursMins=${resHours}:${resMinutes} todayHoursMins=${todayHours}:${todayMinutes}`,
     });
   }
   next({
@@ -129,12 +126,27 @@ function dateAndTimeInFuture(req, res, next) {
   });
 }
 
+async function reservationExists(req, res, next) {
+  const reservation = await service.read(req.params.reservation_id);
+  if (reservation) {
+    res.locals.reservation = reservation;
+    return next();
+  }
+  next({
+    status: 404,
+    message: `Reservation ${req.params.reservation_id} cannot be found.`,
+  });
+}
+
 //middleware functions
 async function listForSpecifiedDate(req, res) {
-  const today = asDateString(new Date());
-  const date = req.query.date || today;
+  const date = req.query.date || "NODATE";
   const reservations = await service.getReservationsForSpecifiedDate(date);
   res.json({ data: reservations });
+}
+
+function read(req, res) {
+  res.json({ data: res.locals.reservation });
 }
 
 async function create(req, res) {
@@ -162,6 +174,7 @@ async function create(req, res) {
 
 module.exports = {
   listForSpecifiedDate: [asyncErrorBoundary(listForSpecifiedDate)],
+  read: [asyncErrorBoundary(reservationExists), read],
   create: [
     bodyDataHas("first_name"),
     bodyDataHas("last_name"),

@@ -2,7 +2,8 @@ const knex = require("../db/connection");
 
 function getReservationsForSpecifiedDate(date) {
   return knex("reservations")
-    .distinct(
+    .select(
+      "reservation_id",
       "first_name",
       "last_name",
       "mobile_number",
@@ -14,8 +15,19 @@ function getReservationsForSpecifiedDate(date) {
     .orderBy("reservation_time");
 }
 
-function list() {
-  return knex("reservations").select("*");
+function read(id) {
+  return knex("reservations")
+    .select(
+      "reservation_id",
+      "first_name",
+      "last_name",
+      "mobile_number",
+      "reservation_date",
+      "reservation_time",
+      "people"
+    )
+    .where("reservation_id", id)
+    .first();
 }
 
 function create(newReservation) {
@@ -23,7 +35,7 @@ function create(newReservation) {
 }
 
 module.exports = {
-  list,
+  read,
   create,
   getReservationsForSpecifiedDate,
 };
