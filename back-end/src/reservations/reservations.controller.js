@@ -108,7 +108,7 @@ function dateAndTimeInFuture(req, res, next) {
   }
   next({
     status: 400,
-    message: `Date/Time combination cannot be in the past. Please choose a future Date/Time. SentTime: ${resDate.getHours()}:${resDate.getMinutes()} CurrentTime: ${todayDate.getHours()}:${todayDate.getMinutes()}`,
+    message: `Date/Time combination cannot be in the past. Please choose a future Date/Time.`, //SentTime: ${resDate.getHours()}:${resDate.getMinutes()} CurrentTime: ${todayDate.getHours()}:${todayDate.getMinutes()}`,
   });
 }
 
