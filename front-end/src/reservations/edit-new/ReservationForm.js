@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { createReservation } from "../../utils/api";
 import ErrorAlert from "../../layout/ErrorAlert";
+import { asDateString, asTimeString } from "../../utils/date-time";
 
 function ReservationForm({
   emptyReservationData,
@@ -60,8 +61,15 @@ function ReservationForm({
 
   async function handleSubmit(event) {
     event.preventDefault();
+    const date = new Date();
+    const currentDate = asDateString(date);
+    const currentTime = asTimeString(date);
     try {
-      await createReservation(newReservation);
+      await createReservation({
+        ...newReservation,
+        currentDate: currentDate,
+        currentTime: currentTime,
+      });
       setNewReservation(emptyReservationData);
       history.push(`/dashboard?date=${newReservation.reservation_date}`);
     } catch (error) {

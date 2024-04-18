@@ -12,10 +12,18 @@ const timeFormat = /\d\d:\d\d/;
  * @returns {string}
  *  the specified Date formatted as YYYY-MM-DD
  */
-function asDateString(date) {
+export function asDateString(date) {
   return `${date.getFullYear().toString(10)}-${(date.getMonth() + 1)
     .toString(10)
     .padStart(2, "0")}-${date.getDate().toString(10).padStart(2, "0")}`;
+}
+
+// Formats time from date as HH:MM
+export function asTimeString(date) {
+  return `${date.getHours().toString(10).padStart(2, "0")}:${date
+    .getMinutes()
+    .toString(10)
+    .padStart(2, "0")}`;
 }
 
 /**
