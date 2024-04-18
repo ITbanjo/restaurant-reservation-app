@@ -101,19 +101,21 @@ function dateAndTimeInFuture(req, res, next) {
     `${reservation_date}T${resHours.toString().padStart(2, "0")}:${resMinutes
       .toString()
       .padStart(2, "0")}:00.000Z`
-  ).toUTCString();
+  );
+  const resDateValue = resDate.getTime();
 
   const date = new Date();
-  const dateValue = Date.parse(date.toUTCString());
+  const dateValue = date.getTime();
   const timeDiff = date.getTimezoneOffset() * 60 * 1000;
-  const todayDate = new Date(dateValue - timeDiff).toUTCString();
+  const todayDate = new Date(dateValue - timeDiff);
+  const todayDateValue = todayDate.getTime();
 
-  if (Date.parse(resDate) > Date.parse(todayDate)) {
+  if (Date.parse(resDateValue) > Date.parse(todayDateValue)) {
     return next();
   }
   next({
     status: 400,
-    message: `Date/Time combination cannot be in the past. Please choose a future Date/Time. SentDate: ${resDate} CurrentDate: ${todayDate}`,
+    message: `Date/Time combination cannot be in the past. Please choose a future Date/Time. SentDate: ${resDateValue} CurrentDate: ${todayDateValue}`,
   });
 }
 
