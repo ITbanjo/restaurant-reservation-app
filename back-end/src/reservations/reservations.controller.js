@@ -99,7 +99,9 @@ function dateAndTimeInFuture(req, res, next) {
 
   const todayDate = new Date();
   const resDate = new Date(
-    Date.parse(`${reservation_date}T${resHours}:${resMinutes}:00.000Z`) +
+    new Date(
+      `${reservation_date}T${resHours}:${resMinutes}:00.000Z`
+    ).getTime() +
       todayDate.getTimezoneOffset() * 60 * 1000
   );
 
@@ -108,7 +110,7 @@ function dateAndTimeInFuture(req, res, next) {
   }
   next({
     status: 400,
-    message: `Date/Time combination cannot be in the past. Please choose a future Date/Time.`, //SentTime: ${resDate.getHours()}:${resDate.getMinutes()} CurrentTime: ${todayDate.getHours()}:${todayDate.getMinutes()}`,
+    message: `Date/Time combination cannot be in the past. Please choose a future Date/Time. SentTime: ${resDate.getHours()}:${resDate.getMinutes()} CurrentTime: ${todayDate.getHours()}:${todayDate.getMinutes()}`,
   });
 }
 
