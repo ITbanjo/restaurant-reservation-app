@@ -97,16 +97,16 @@ function dateAndTimeInFuture(req, res, next) {
   const { data: { reservation_date } = {} } = req.body;
   const { resHours, resMinutes } = res.locals;
 
-  const todayDateRaw = new Date();
-  const todayDate = todayDateRaw.toUTCString();
   const resDate = new Date(
-    new Date(
-      `${reservation_date}T${resHours.toString().padStart(2, "0")}:${resMinutes
-        .toString()
-        .padStart(2, "0")}:00.000Z`
-    ).getTime() +
-      todayDateRaw.getTimezoneOffset() * 60 * 1000
+    `${reservation_date}T${resHours.toString().padStart(2, "0")}:${resMinutes
+      .toString()
+      .padStart(2, "0")}:00.000Z`
   ).toUTCString();
+
+  const date = new Date();
+  const dateValue = Date.parse(date.toUTCString());
+  const timeDiff = date.getTimezoneOffset() * 60 * 1000;
+  const todayDate = new Date(dateValue - timeDiff).toUTCString();
 
   if (Date.parse(resDate) > Date.parse(todayDate)) {
     return next();
