@@ -107,10 +107,10 @@ function dateAndTimeInFuture(req, res, next) {
   const date = new Date();
   const dateValue = date.getTime();
   const timeDiff = date.getTimezoneOffset() * 60 * 1000;
-  const todayDate = new Date(dateValue - timeDiff);
-  const todayDateValue = todayDate.getTime();
+  const todayDateValue = dateValue - timeDiff;
+  //onst todayDateValue = todayDate.getTime();
 
-  if (Date.parse(resDateValue) > Date.parse(todayDateValue)) {
+  if (resDateValue > todayDateValue) {
     return next();
   }
   next({
