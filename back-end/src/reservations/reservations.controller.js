@@ -107,7 +107,7 @@ function dateAndTimeInFuture(req, res, next) {
   );
   resDate.setMinutes(resDate.getMinutes() + utcOffset);
 
-  if (resDate.getTime() > resDate.getTime()) {
+  if (resDate.getTime() > todayDate.getTime()) {
     return next();
   }
   next({
