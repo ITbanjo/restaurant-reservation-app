@@ -120,6 +120,12 @@ async function updateTableSeat(req, res) {
   res.json({ data });
 }
 
+async function deleteTableSeat(req, res) {
+  const { table_id } = req.params;
+  await service.deleteTableSeat(table_id);
+  res.sendStatus(204);
+}
+
 module.exports = {
   list: [asyncErrorBoundary(list)],
   create: [
@@ -137,5 +143,9 @@ module.exports = {
     asyncErrorBoundary(tableHasSufficientCapacity),
     tableIsNotOccupied,
     asyncErrorBoundary(updateTableSeat),
+  ],
+  deleteTableSeat: [
+    asyncErrorBoundary(tableExists),
+    asyncErrorBoundary(deleteTableSeat),
   ],
 };

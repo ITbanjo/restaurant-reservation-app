@@ -97,7 +97,13 @@ function Dashboard({ date }) {
       </div>
       <div className="d-md-flex justify-content-between">
         <div className="w-100 mr-1">
-          <ReservationList reservations={reservations} />
+          <ReservationList
+            reservations={reservations}
+            date={date}
+            setReservations={setReservations}
+            setReservationsError={setReservationsError}
+            tables={tables}
+          />
         </div>
         <div className="w-100">
           <TableList tables={tables} />

@@ -13,19 +13,6 @@ function read(id) {
     .first();
 }
 
-// function getTablesToAccomodateSizeOfParty(reservation_id) {
-//   return knex("tables as t")
-//     .leftJoin("reservations as r", "r.reservation_id", "t.reservation_id")
-//     .select(
-//       "table_id",
-//       "table_name",
-//       "capacity",
-//       "r.reservation_id",
-//       "r.people"
-//     )
-//     .where("t.capacity", ">=", "r.people");
-// }
-
 function create(newTable) {
   return knex("tables").insert(newTable).returning("*");
 }
@@ -37,9 +24,17 @@ function updateTableSeat(updatedTableSeat) {
     .update(updatedTableSeat, "*")
     .then((updateData) => updateData[0]);
 }
+
+function deleteTableSeat(table_id) {
+  return knex("tables")
+    .select("reservation_id")
+    .where("table_id", table_id)
+    .update("reservation_id", null);
+}
 module.exports = {
   getTables,
   read,
   create,
   updateTableSeat,
+  deleteTableSeat,
 };
