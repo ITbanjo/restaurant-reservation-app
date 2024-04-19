@@ -172,6 +172,13 @@ async function create(req, res) {
   res.status(201).json({ data: create[0] });
 }
 
+async function updateReservationStatus(req, res) {
+  const { data: { status = "booked" } = {} } = req.body;
+  const { reservation_id } = req.params;
+  const data = await service.updateReservationStatus(reservation_id, status);
+  res.json({ data });
+}
+
 module.exports = {
   listForSpecifiedDate: [asyncErrorBoundary(listForSpecifiedDate)],
   read: [asyncErrorBoundary(reservationExists), read],
@@ -190,5 +197,9 @@ module.exports = {
     timeIsHourBeforeClosing,
     dateAndTimeInFuture,
     asyncErrorBoundary(create),
+  ],
+  updateReservationStatus: [
+    asyncErrorBoundary(reservationExists),
+    asyncErrorBoundary(updateReservationStatus),
   ],
 };

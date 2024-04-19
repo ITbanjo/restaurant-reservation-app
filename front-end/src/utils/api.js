@@ -116,3 +116,13 @@ export async function finishReservation(table_id) {
   const url = new URL(`${API_BASE_URL}/tables/${table_id}/seat`);
   return await fetchJson(url, { method: "DELETE", headers }, {});
 }
+
+export async function updateReservationStatus(reservation_id, data) {
+  const url = new URL(`${API_BASE_URL}/reservations/${reservation_id}/status`);
+  const options = {
+    method: "PUT",
+    headers,
+    body: JSON.stringify({ data }),
+  };
+  return await fetchJson(url, options, {});
+}

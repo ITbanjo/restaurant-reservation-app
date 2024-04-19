@@ -1,5 +1,5 @@
 import React from "react";
-import { listReservations, finishReservation } from "../utils/api";
+import { updateReservationStatus, finishReservation } from "../utils/api";
 import { useHistory } from "react-router-dom";
 
 function Reservation({ reservation, tables, loadDashboard }) {
@@ -10,6 +10,7 @@ function Reservation({ reservation, tables, loadDashboard }) {
     mobile_number,
     people,
     reservation_time,
+    status,
   } = reservation;
   const history = useHistory();
   const table = tables.find((table) => table.reservation_id === reservation_id);
@@ -32,6 +33,7 @@ function Reservation({ reservation, tables, loadDashboard }) {
       const result = window.confirm(modalMsg);
       if (result) {
         await finishReservation(table.table_id);
+        await updateReservationStatus(reservation_id, { status: "finished" });
         await loadDashboard();
       }
     } catch (error) {
@@ -39,12 +41,33 @@ function Reservation({ reservation, tables, loadDashboard }) {
     }
   }
 
+  async function handleSeat() {
+    await updateReservationStatus(reservation_id, { status: "seated" });
+  }
+
+  function displayStatus(status) {
+    if (status === "booked") {
+      return <span className="text-success">Booked</span>;
+    }
+    if (status === "seated") {
+      return <span className="text-danger">Seated</span>;
+    }
+  }
+
   return (
     <div className="card rounded-0" key={reservation_id}>
       <div className="card-body">
-        <h4 className="card-title font-weight-bold">
-          {timeFormatter(reservation_time)}
-        </h4>
+        <div className="d-flex justify-content-between">
+          <h4 className="card-title font-weight-bold">
+            {timeFormatter(reservation_time)}
+          </h4>
+          <h4
+            className="card-title font-weight-bold"
+            data-reservation-id-status={reservation_id}
+          >
+            {displayStatus(status)}
+          </h4>
+        </div>
         <p>
           Name:{" "}
           <span className="font-weight-bold">
@@ -67,7 +90,9 @@ function Reservation({ reservation, tables, loadDashboard }) {
           </button>
         ) : (
           <a href={`/reservations/${reservation_id}/seat`}>
-            <button className="btn btn-success btn-lg">Seat</button>
+            <button className="btn btn-success btn-lg" onClick={handleSeat}>
+              Seat
+            </button>
           </a>
         )}
       </div>

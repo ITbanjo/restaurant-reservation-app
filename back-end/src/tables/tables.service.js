@@ -1,4 +1,5 @@
 const knex = require("../db/connection");
+//const trx = await knex.transaction();
 
 function getTables() {
   return knex("tables")
@@ -21,7 +22,7 @@ function updateTableSeat(updatedTableSeat) {
   return knex("tables")
     .select("*")
     .where("table_id", updatedTableSeat.table_id)
-    .update(updatedTableSeat, "*")
+    .update("reservation_id", updatedTableSeat.reservation_id)
     .then((updateData) => updateData[0]);
 }
 
