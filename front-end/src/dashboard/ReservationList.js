@@ -1,9 +1,22 @@
 import React from "react";
 import Reservation from "./Reservation";
 
-function ReservationList({ reservations }) {
+function ReservationList({
+  reservations,
+  date,
+  setReservations,
+  setReservationsError,
+  tables,
+  loadDashboard,
+}) {
   return reservations.length ? (
-    reservations.map((reservation) => <Reservation reservation={reservation} />)
+    reservations.map((reservation) => (
+      <Reservation
+        reservation={reservation}
+        tables={tables}
+        loadDashboard={loadDashboard}
+      />
+    ))
   ) : (
     <h5 className="pt-3">There are no reservations set for this date.</h5>
   );
