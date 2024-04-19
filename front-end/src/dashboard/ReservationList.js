@@ -7,15 +7,14 @@ function ReservationList({
   setReservations,
   setReservationsError,
   tables,
+  loadDashboard,
 }) {
   return reservations.length ? (
     reservations.map((reservation) => (
       <Reservation
         reservation={reservation}
-        date={date}
-        setReservations={setReservations}
-        setReservationsError={setReservationsError}
         tables={tables}
+        loadDashboard={loadDashboard}
       />
     ))
   ) : (

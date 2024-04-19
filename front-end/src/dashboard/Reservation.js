@@ -1,14 +1,8 @@
 import React from "react";
-import { listReservations, deleteTableReservation } from "../utils/api";
+import { listReservations, finishReservation } from "../utils/api";
 import { useHistory } from "react-router-dom";
 
-function Reservation({
-  reservation,
-  date,
-  setReservations,
-  setReservationsError,
-  tables,
-}) {
+function Reservation({ reservation, tables, loadDashboard }) {
   const {
     reservation_id,
     first_name,
@@ -33,22 +27,12 @@ function Reservation({
   }
 
   async function modal() {
-    const abortController = new AbortController();
     try {
       const modalMsg = `Is this table ready to seat new guests? This cannot be undone.`;
       const result = window.confirm(modalMsg);
       if (result) {
-        await deleteTableReservation(table.table_id);
-        listReservations({ date }, abortController.signal)
-          .then(setReservations)
-          .then(
-            history.push({
-              pathname: "/dashboard",
-              search: `?date=${date}`,
-            })
-          )
-          .catch(setReservationsError);
-        return () => abortController.abort();
+        await finishReservation(table.table_id);
+        await loadDashboard();
       }
     } catch (error) {
       throw error;
