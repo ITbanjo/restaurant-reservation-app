@@ -138,6 +138,39 @@ async function reservationExists(req, res, next) {
   });
 }
 
+function reservationStatusIsBooked(req, res, next) {
+  const { data: { status = "booked" } = {} } = req.body;
+  if (status === "booked") {
+    return next();
+  }
+  next({
+    status: 400,
+    message: `Reservation status is "${status}". Must be set to "booked" in order to seat`,
+  });
+}
+
+function statusIsNotUnknown(req, res, next) {
+  const { data: { status } = {} } = req.body;
+  if (status === "booked" || status === "seated" || status === "finished") {
+    return next();
+  }
+  next({
+    status: 400,
+    message: `Reservation status is unknown. Valid statuses are "booked", "seated", and "finished".`,
+  });
+}
+
+function statusIsNotFinished(req, res, next) {
+  const { status } = res.locals.reservation;
+  if (status === "finished") {
+    next({
+      status: 400,
+      message: `A finished reservation cannot be updated`,
+    });
+  }
+  return next();
+}
+
 //middleware functions
 async function listForSpecifiedDate(req, res) {
   const date = req.query.date || "NODATE";
@@ -176,7 +209,7 @@ async function updateReservationStatus(req, res) {
   const { data: { status = "booked" } = {} } = req.body;
   const { reservation_id } = req.params;
   const data = await service.updateReservationStatus(reservation_id, status);
-  res.json({ data });
+  res.status(200).json({ data });
 }
 
 module.exports = {
@@ -196,10 +229,13 @@ module.exports = {
     timeIsAfterOpening,
     timeIsHourBeforeClosing,
     dateAndTimeInFuture,
+    reservationStatusIsBooked,
     asyncErrorBoundary(create),
   ],
   updateReservationStatus: [
     asyncErrorBoundary(reservationExists),
+    statusIsNotUnknown,
+    statusIsNotFinished,
     asyncErrorBoundary(updateReservationStatus),
   ],
 };

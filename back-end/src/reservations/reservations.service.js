@@ -13,6 +13,7 @@ function getReservationsForSpecifiedDate(date) {
       "status"
     )
     .where("reservation_date", date)
+    .andWhere("status", "<>", "finished")
     .orderBy("reservation_time");
 }
 
@@ -25,7 +26,8 @@ function read(id) {
       "mobile_number",
       "reservation_date",
       "reservation_time",
-      "people"
+      "people",
+      "status"
     )
     .where("reservation_id", id)
     .first();
@@ -35,12 +37,11 @@ function create(newReservation) {
   return knex("reservations").insert(newReservation).returning("*");
 }
 
-function updateReservationStatus(reservation_id, status) {
+async function updateReservationStatus(reservation_id, status) {
   return knex("reservations")
-    .select("*")
     .where("reservation_id", reservation_id)
-    .update("status", status)
-    .then((updateData) => updateData[0]);
+    .update({ status: status }, ["status"])
+    .then((data) => data[0]);
 }
 
 module.exports = {
