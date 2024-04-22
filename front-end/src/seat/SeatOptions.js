@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
-import { updateTableWithReservation } from "../utils/api";
+import { seatReservationWithTable } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 
 function SeatOptions({ tables, reservation }) {
@@ -30,7 +30,7 @@ function SeatOptions({ tables, reservation }) {
     event.preventDefault();
     setUpdateError(null);
     try {
-      await updateTableWithReservation(selectedTable.table_id, {
+      await seatReservationWithTable(selectedTable.table_id, {
         reservation_id: reservation.reservation_id,
       });
       history.push(`/dashboard`);

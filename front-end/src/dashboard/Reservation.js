@@ -12,7 +12,7 @@ function Reservation({ reservation, tables, loadDashboard }) {
     reservation_time,
     status,
   } = reservation;
-  const history = useHistory();
+
   const table = tables.find((table) => table.reservation_id === reservation_id);
 
   function timeFormatter(time) {
@@ -33,16 +33,11 @@ function Reservation({ reservation, tables, loadDashboard }) {
       const result = window.confirm(modalMsg);
       if (result) {
         await finishReservation(table.table_id);
-        await updateReservationStatus(reservation_id, { status: "finished" });
         await loadDashboard();
       }
     } catch (error) {
       throw error;
     }
-  }
-
-  async function handleSeat() {
-    await updateReservationStatus(reservation_id, { status: "seated" });
   }
 
   function displayStatus(status) {
@@ -90,9 +85,7 @@ function Reservation({ reservation, tables, loadDashboard }) {
           </button>
         ) : (
           <a href={`/reservations/${reservation_id}/seat`}>
-            <button className="btn btn-success btn-lg" onClick={handleSeat}>
-              Seat
-            </button>
+            <button className="btn btn-success btn-lg">Seat</button>
           </a>
         )}
       </div>
