@@ -2,18 +2,26 @@ import React from "react";
 import { updateReservationStatus, finishReservation } from "../utils/api";
 import { useHistory } from "react-router-dom";
 
-function Reservation({ reservation, tables, loadDashboard }) {
+function Reservation({ reservation, tables, loadDashboard, isSearch }) {
   const {
     reservation_id,
     first_name,
     last_name,
     mobile_number,
     people,
+    reservation_date,
     reservation_time,
     status,
   } = reservation;
 
   const table = tables.find((table) => table.reservation_id === reservation_id);
+  const formattedDate = new Date(reservation_date).toLocaleDateString("en-us", {
+    timeZone: "UTC",
+    weekday: "short",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
 
   function timeFormatter(time) {
     const hours = time.substr(0, 2);
@@ -40,13 +48,32 @@ function Reservation({ reservation, tables, loadDashboard }) {
     }
   }
 
-  function displayStatus(status) {
+  function displayStatus() {
     if (status === "booked") {
       return <span className="text-success">Booked</span>;
     }
     if (status === "seated") {
       return <span className="text-danger">Seated</span>;
     }
+    if (status === "finished") {
+      return <span className="text-secondary">Finished</span>;
+    }
+  }
+
+  function displayButton() {
+    return table ? ( //if reservation_id is associated with a table, display finish button --- This method make sure frontend test 5 passes
+      <button
+        className="btn btn-danger btn-lg"
+        onClick={modal}
+        data-table-id-finish={table.table_id}
+      >
+        Finish
+      </button>
+    ) : (
+      <a href={`/reservations/${reservation_id}/seat`}>
+        <button className="btn btn-success btn-lg">Seat</button>
+      </a>
+    );
   }
 
   return (
@@ -54,13 +81,15 @@ function Reservation({ reservation, tables, loadDashboard }) {
       <div className="card-body">
         <div className="d-flex justify-content-between">
           <h4 className="card-title font-weight-bold">
-            {timeFormatter(reservation_time)}
+            {isSearch
+              ? `${timeFormatter(reservation_time)} - ${formattedDate}`
+              : timeFormatter(reservation_time)}
           </h4>
           <h4
             className="card-title font-weight-bold"
             data-reservation-id-status={reservation_id}
           >
-            {displayStatus(status)}
+            {displayStatus()}
           </h4>
         </div>
         <p>
@@ -75,19 +104,7 @@ function Reservation({ reservation, tables, loadDashboard }) {
         <p>
           Party Size: <span className="font-weight-bold">{people}</span>
         </p>
-        {table ? (
-          <button
-            className="btn btn-danger btn-lg"
-            onClick={modal}
-            data-table-id-finish={table.table_id}
-          >
-            Finish
-          </button>
-        ) : (
-          <a href={`/reservations/${reservation_id}/seat`}>
-            <button className="btn btn-success btn-lg">Seat</button>
-          </a>
-        )}
+        {isSearch ? "" : displayButton()}
       </div>
     </div>
   );

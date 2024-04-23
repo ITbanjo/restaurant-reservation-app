@@ -18,7 +18,7 @@ function ReservationList({
       />
     ))
   ) : (
-    <h5 className="pt-3">There are no reservations set for this date.</h5>
+    <h5 className="pt-3">No reservations found for this date</h5>
   );
 }
 
