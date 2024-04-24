@@ -17,7 +17,7 @@ router.route("/:reservation_id").get(controller.read).all(methodNotAllowed);
 
 router
   .route("/")
-  .get(controller.listForSpecifiedDate)
+  .get(controller.listForSpecifiedDateOrPhoneNumber)
   .post(controller.create)
   .all(methodNotAllowed);
 

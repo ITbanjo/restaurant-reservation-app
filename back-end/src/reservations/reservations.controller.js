@@ -172,10 +172,22 @@ function statusIsNotFinished(req, res, next) {
 }
 
 //middleware functions
-async function listForSpecifiedDate(req, res) {
-  const date = req.query.date || "NODATE";
-  const reservations = await service.getReservationsForSpecifiedDate(date);
-  res.json({ data: reservations });
+async function listForSpecifiedDateOrPhoneNumber(req, res) {
+  const date = req.query.date; //|| "NODATE";
+  const phoneNumber = req.query.mobile_number; //|| "NONUMBER"
+  let reservations;
+  if (date) {
+    res.json({ data: await service.getReservationsForSpecifiedDate(date) });
+  }
+  if (phoneNumber) {
+    res.json({
+      data: await service.searchReservationsForSpecifiedPhoneNumber(
+        phoneNumber
+      ),
+    });
+  }
+
+  //res.json({ data: reservations });
 }
 
 function read(req, res) {
@@ -213,7 +225,9 @@ async function updateReservationStatus(req, res) {
 }
 
 module.exports = {
-  listForSpecifiedDate: [asyncErrorBoundary(listForSpecifiedDate)],
+  listForSpecifiedDateOrPhoneNumber: [
+    asyncErrorBoundary(listForSpecifiedDateOrPhoneNumber),
+  ],
   read: [asyncErrorBoundary(reservationExists), read],
   create: [
     bodyDataHas("first_name"),
