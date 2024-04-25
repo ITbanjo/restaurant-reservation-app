@@ -16,7 +16,6 @@ function CreateReservation() {
     <div>
       <h1>Create Reservation</h1>
       <ReservationForm
-        //emptyReservationData={emptyReservationData}
         reservationData={newReservation}
         setReservationData={setNewReservation}
       />

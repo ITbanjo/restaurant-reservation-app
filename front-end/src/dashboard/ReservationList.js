@@ -3,11 +3,11 @@ import Reservation from "./Reservation";
 
 function ReservationList({
   reservations,
-  date,
   setReservations,
   setReservationsError,
   tables,
   loadDashboard,
+  date,
 }) {
   return reservations.length ? (
     reservations.map((reservation) => (
@@ -15,6 +15,9 @@ function ReservationList({
         reservation={reservation}
         tables={tables}
         loadDashboard={loadDashboard}
+        setReservations={setReservations}
+        setReservationsError={setReservationsError}
+        date={date}
       />
     ))
   ) : (

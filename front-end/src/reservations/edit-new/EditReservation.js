@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { getReservationByReservationId } from "../../utils/api";
 import ReservationForm from "./ReservationForm";
 
-function EditReservation() {
+function EditReservation({ setReservations }) {
   const { reservation_id } = useParams();
   const [editReservation, setEditReservation] = useState({});
 
@@ -21,7 +21,6 @@ function EditReservation() {
     <div>
       <h1>Edit Reservation</h1>
       <ReservationForm
-        //emptyReservationData={""}
         reservationData={editReservation}
         setReservationData={setEditReservation}
         edit={true}

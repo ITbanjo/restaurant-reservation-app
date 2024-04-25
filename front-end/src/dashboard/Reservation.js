@@ -9,8 +9,10 @@ function Reservation({
   reservation,
   tables,
   loadDashboard,
-  search,
+  phoneNumber,
   setReservations,
+  setReservationsError,
+  date,
 }) {
   const {
     reservation_id,
@@ -53,7 +55,7 @@ function Reservation({
         await loadDashboard();
       }
     } catch (error) {
-      throw error;
+      setReservationsError(error);
     }
   }
 
@@ -63,10 +65,11 @@ function Reservation({
       const result = window.confirm(modalMsg);
       if (result) {
         await updateReservationStatus(reservation_id, { status: "cancelled" });
-        await listReservations(search).then(setReservations);
+        const list = await listReservations(date ? { date } : phoneNumber); //If cancelled from /dashboard, list reservations by date, else list by phoneNumber for /search
+        setReservations(list);
       }
     } catch (error) {
-      throw error;
+      setReservationsError(error);
     }
   }
 
@@ -106,7 +109,7 @@ function Reservation({
       <div className="card-body">
         <div className="d-flex justify-content-between">
           <h4 className="card-title font-weight-bold">
-            {search
+            {phoneNumber
               ? `${timeFormatter(reservation_time)} - ${formattedDate}`
               : timeFormatter(reservation_time)}
           </h4>
@@ -130,7 +133,7 @@ function Reservation({
           Party Size: <span className="font-weight-bold">{people}</span>
         </p>
         <div>
-          {search ? "" : displayButton()}
+          {phoneNumber ? "" : displayButton()}
           <a href={`/reservations/${reservation_id}/edit`}>
             <button className="btn btn-primary btn-lg mr-2">Edit</button>
           </a>

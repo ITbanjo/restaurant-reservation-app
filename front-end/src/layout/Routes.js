@@ -1,5 +1,4 @@
-import React from "react";
-
+import React, { useState } from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
 import Dashboard from "../dashboard/Dashboard";
 import NotFound from "./NotFound";
@@ -22,6 +21,8 @@ function Routes() {
   const query = useQuery();
   const date = query.get("date");
 
+  const [reservations, setReservations] = useState([]);
+
   return (
     <Switch>
       <Route exact={true} path="/">
@@ -31,7 +32,11 @@ function Routes() {
         <Redirect to={"/dashboard"} />
       </Route>
       <Route path="/dashboard">
-        <Dashboard date={date || today()} />
+        <Dashboard
+          date={date || today()}
+          reservations={reservations}
+          setReservations={setReservations}
+        />
       </Route>
       <Route exact={true} path="/reservations/new">
         <CreateReservation />
@@ -40,13 +45,13 @@ function Routes() {
         <SeatReservation />
       </Route>
       <Route exact={true} path="/reservations/:reservation_id/edit">
-        <EditReservation />
+        <EditReservation setReservations={setReservations} />
       </Route>
       <Route exact={true} path="/tables/new">
         <CreateTable />
       </Route>
       <Route path="/search">
-        <Search />
+        <Search reservations={reservations} setReservations={setReservations} />
       </Route>
       <Route>
         <NotFound />

@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
-import { createReservation, editReservation } from "../../utils/api";
+import {
+  createReservation,
+  editReservation,
+  listReservations,
+} from "../../utils/api";
 import ErrorAlert from "../../layout/ErrorAlert";
 import { asDateAndTimeStringObj } from "../../utils/date-time";
 import formatPhoneNumber from "../../utils/format-phone-number";
@@ -51,14 +55,13 @@ function ReservationForm({
           ...reservationData,
           ...currentDateAndTime,
         });
-        history.goBack();
       } else {
         await createReservation({
           ...reservationData,
           ...currentDateAndTime,
         });
-        history.push(`/dashboard?date=${reservation_date}`);
       }
+      history.push(`/dashboard?date=${reservation_date}`);
     } catch (error) {
       // display both past-date and Tuesday errors at once if necesarry
       setErrorMessage(handleDateErrors(reservation_date, error));

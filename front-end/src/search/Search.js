@@ -2,16 +2,21 @@ import React, { useState } from "react";
 import SearchForm from "./SearchForm";
 import Reservation from "../dashboard/Reservation";
 
-function Search() {
-  const [reservations, setReservations] = useState([]);
-  const [search, setSearch] = useState({});
+function Search({ reservations, setReservations }) {
+  const [phoneNumber, setPhoneNumber] = useState({});
   const [showList, setShowList] = useState(false);
+  const [searchError, setSearchError] = useState(null);
   const emptyArray = [];
 
   function renderReservationList() {
     return reservations.length ? (
       reservations.map((reservation) => (
-        <Reservation reservation={reservation} />
+        <Reservation
+          reservation={reservation}
+          tables={emptyArray}
+          phoneNumber={phoneNumber}
+          setReservations={setReservations}
+        />
       ))
     ) : (
       <h5 className="pt-3">No reservations found</h5>
@@ -23,29 +28,14 @@ function Search() {
       <h1 className="mt-3">Search</h1>
       <SearchForm
         setReservations={setReservations}
-        reservations={reservations}
-        setSearch={setSearch}
-        search={search}
+        setPhoneNumber={setPhoneNumber}
+        phoneNumber={phoneNumber}
         setShowList={setShowList}
+        setSearchError={setSearchError}
+        searchError={searchError}
       />
 
-      {showList ? (
-        reservations.length ? (
-          reservations.map((reservation) => (
-            <Reservation
-              reservation={reservation}
-              tables={emptyArray}
-              loadDashboard={null}
-              search={search}
-              setReservations={setReservations}
-            />
-          ))
-        ) : (
-          <h5 className="pt-3">No reservations found</h5>
-        )
-      ) : (
-        ""
-      )}
+      {showList ? renderReservationList() : ""}
     </div>
   );
 }
