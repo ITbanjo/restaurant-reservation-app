@@ -20,7 +20,7 @@ function Dashboard({ date }) {
   const history = useHistory();
   const dashboardDate = new Date(date).toLocaleDateString("en-us", {
     timeZone: "UTC",
-    weekday: "long",
+    weekday: "short",
     year: "numeric",
     month: "short",
     day: "numeric",

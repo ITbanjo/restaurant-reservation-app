@@ -36,7 +36,8 @@ function Search() {
               reservation={reservation}
               tables={emptyArray}
               loadDashboard={null}
-              isSearch={search}
+              search={search}
+              setReservations={setReservations}
             />
           ))
         ) : (
