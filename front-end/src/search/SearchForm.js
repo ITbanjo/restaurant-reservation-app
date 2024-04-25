@@ -1,41 +1,43 @@
-import React, { useState } from "react";
+import React from "react";
 import { listReservations } from "../utils/api";
+import ErrorAlert from "../layout/ErrorAlert";
 
 function SearchForm({
   setReservations,
-  reservations,
-  setSearch,
-  search,
+  setPhoneNumber,
+  phoneNumber,
   setShowList,
+  setSearchError,
+  searchError,
 }) {
   function handleChange(event) {
-    setSearch({
+    setPhoneNumber({
       [event.target.name]: event.target.value,
     });
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
     const abortController = new AbortController();
-    console.log(search);
     try {
-      listReservations(search).then(setReservations);
+      const list = await listReservations(phoneNumber);
+      setReservations(list);
       setShowList(true);
     } catch (error) {
-      throw error;
+      setSearchError(error);
     }
     return () => abortController.abort();
   }
 
   return (
     <div>
-      {/* <ErrorAlert error={newTableError} /> */}
+      <ErrorAlert error={searchError} />
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label for="search">Search</label>
           <input
             id="search"
-            value={search.mobile_number}
+            value={phoneNumber.mobile_number}
             name="mobile_number"
             type="tel"
             className="form-control"

@@ -1,8 +1,19 @@
 import React from "react";
-import { updateReservationStatus, finishReservation } from "../utils/api";
-import { useHistory } from "react-router-dom";
+import {
+  updateReservationStatus,
+  finishReservation,
+  listReservations,
+} from "../utils/api";
 
-function Reservation({ reservation, tables, loadDashboard, isSearch }) {
+function Reservation({
+  reservation,
+  tables,
+  loadDashboard,
+  phoneNumber,
+  setReservations,
+  setReservationsError,
+  date,
+}) {
   const {
     reservation_id,
     first_name,
@@ -35,7 +46,7 @@ function Reservation({ reservation, tables, loadDashboard, isSearch }) {
     return `${Number(hours) - 12}:${minutes} PM`;
   }
 
-  async function modal() {
+  async function modalFinish() {
     try {
       const modalMsg = `Is this table ready to seat new guests? This cannot be undone.`;
       const result = window.confirm(modalMsg);
@@ -44,7 +55,21 @@ function Reservation({ reservation, tables, loadDashboard, isSearch }) {
         await loadDashboard();
       }
     } catch (error) {
-      throw error;
+      setReservationsError(error);
+    }
+  }
+
+  async function modalCancel() {
+    try {
+      const modalMsg = `Do you want to cancel this reservation? This cannot be undone.`;
+      const result = window.confirm(modalMsg);
+      if (result) {
+        await updateReservationStatus(reservation_id, { status: "cancelled" });
+        const list = await listReservations(date ? { date } : phoneNumber); //If cancelled from /dashboard, list reservations by date, else list by phoneNumber for /search
+        setReservations(list);
+      }
+    } catch (error) {
+      setReservationsError(error);
     }
   }
 
@@ -58,20 +83,23 @@ function Reservation({ reservation, tables, loadDashboard, isSearch }) {
     if (status === "finished") {
       return <span className="text-secondary">Finished</span>;
     }
+    if (status === "cancelled") {
+      return <span className="text-secondary">Cancelled</span>;
+    }
   }
 
   function displayButton() {
-    return table ? ( //if reservation_id is associated with a table, display finish button --- This method make sure frontend test 5 passes
+    return table ? ( //if reservation_id is associated with a table, display finish button --- This method make sure frontend tests "5" passes
       <button
-        className="btn btn-danger btn-lg"
-        onClick={modal}
+        className="btn btn-danger btn-lg mr-2"
+        onClick={modalFinish}
         data-table-id-finish={table.table_id}
       >
         Finish
       </button>
     ) : (
       <a href={`/reservations/${reservation_id}/seat`}>
-        <button className="btn btn-success btn-lg">Seat</button>
+        <button className="btn btn-success btn-lg mr-2">Seat</button>
       </a>
     );
   }
@@ -81,7 +109,7 @@ function Reservation({ reservation, tables, loadDashboard, isSearch }) {
       <div className="card-body">
         <div className="d-flex justify-content-between">
           <h4 className="card-title font-weight-bold">
-            {isSearch
+            {phoneNumber
               ? `${timeFormatter(reservation_time)} - ${formattedDate}`
               : timeFormatter(reservation_time)}
           </h4>
@@ -104,7 +132,19 @@ function Reservation({ reservation, tables, loadDashboard, isSearch }) {
         <p>
           Party Size: <span className="font-weight-bold">{people}</span>
         </p>
-        {isSearch ? "" : displayButton()}
+        <div>
+          {phoneNumber ? "" : displayButton()}
+          <a href={`/reservations/${reservation_id}/edit`}>
+            <button className="btn btn-primary btn-lg mr-2">Edit</button>
+          </a>
+          <button
+            className="btn btn-warning btn-lg"
+            data-reservation-id-cancel={reservation_id}
+            onClick={modalCancel}
+          >
+            Cancel
+          </button>
+        </div>
       </div>
     </div>
   );

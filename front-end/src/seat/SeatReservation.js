@@ -8,25 +8,28 @@ function SeatReservation() {
   const { reservation_id } = useParams();
   const [tables, setTables] = useState([]);
   const [reservation, setReservation] = useState({});
-  const [seatReservationError, setSeatReservationError] = useState(null);
-  const [seatTablesError, setSeatTablesError] = useState(null);
+  //const [seatReservationError, setSeatReservationError] = useState(null);
+  const [seatError, setSeatError] = useState(null);
 
   useEffect(loadSeatReservation, []);
 
   async function loadSeatReservation() {
     const abortController = new AbortController();
-    setSeatReservationError(null);
-    setSeatTablesError(null);
+    setSeatError(null);
+    try {
+      //Load Tables
+      setTables(await listTables(abortController.signal));
 
-    //Load Tables
-    listTables(abortController.signal)
-      .then(setTables)
-      .catch(setSeatTablesError);
-
-    //Load Reservation
-    getReservationByReservationId(reservation_id, abortController.signal)
-      .then(setReservation)
-      .catch(setSeatReservationError);
+      //Load Reservation
+      setReservation(
+        await getReservationByReservationId(
+          reservation_id,
+          abortController.signal
+        )
+      );
+    } catch (error) {
+      setSeatError(error);
+    }
 
     return () => abortController.abort();
   }
@@ -35,10 +38,13 @@ function SeatReservation() {
     return (
       <>
         <h1 className="mt-3">Seat Reservation</h1>
-        <ErrorAlert error={seatReservationError} />
-        <ErrorAlert error={seatTablesError} />
+        <ErrorAlert error={seatError} />
         <div>
-          <SeatOptions tables={tables} reservation={reservation} />
+          <SeatOptions
+            tables={tables}
+            reservation={reservation}
+            setSeatError={setSeatError}
+          />
         </div>
       </>
     );

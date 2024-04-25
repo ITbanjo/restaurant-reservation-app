@@ -26,6 +26,15 @@ export function asTimeString(date) {
     .padStart(2, "0")}`;
 }
 
+export function asDateAndTimeStringObj(date) {
+  const currentDate = asDateString(date);
+  const currentTime = asTimeString(date);
+  return {
+    currentDate: currentDate,
+    currentTime: currentTime,
+  };
+}
+
 /**
  * Format a date string in ISO-8601 format (which is what is returned from PostgreSQL) as YYYY-MM-DD.
  * @param dateString

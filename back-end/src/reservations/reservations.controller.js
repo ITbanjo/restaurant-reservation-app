@@ -151,7 +151,12 @@ function reservationStatusIsBooked(req, res, next) {
 
 function statusIsNotUnknown(req, res, next) {
   const { data: { status } = {} } = req.body;
-  if (status === "booked" || status === "seated" || status === "finished") {
+  if (
+    status === "booked" ||
+    status === "seated" ||
+    status === "finished" ||
+    status === "cancelled"
+  ) {
     return next();
   }
   next({
@@ -173,9 +178,8 @@ function statusIsNotFinished(req, res, next) {
 
 //middleware functions
 async function listForSpecifiedDateOrPhoneNumber(req, res) {
-  const date = req.query.date; //|| "NODATE";
-  const phoneNumber = req.query.mobile_number; //|| "NONUMBER"
-  let reservations;
+  const date = req.query.date;
+  const phoneNumber = req.query.mobile_number;
   if (date) {
     res.json({ data: await service.getReservationsForSpecifiedDate(date) });
   }
@@ -186,8 +190,6 @@ async function listForSpecifiedDateOrPhoneNumber(req, res) {
       ),
     });
   }
-
-  //res.json({ data: reservations });
 }
 
 function read(req, res) {
@@ -215,6 +217,30 @@ async function create(req, res) {
   };
   const create = await service.create(newReservation);
   res.status(201).json({ data: create[0] });
+}
+
+async function edit(req, res) {
+  const {
+    data: {
+      first_name,
+      last_name,
+      mobile_number,
+      reservation_date,
+      reservation_time,
+      people,
+    } = {},
+  } = req.body;
+  const updatedReservation = {
+    ...res.locals.reservation,
+    first_name: first_name,
+    last_name: last_name,
+    mobile_number: mobile_number,
+    reservation_date: reservation_date,
+    reservation_time: reservation_time,
+    people: people,
+  };
+  const data = await service.edit(updatedReservation);
+  res.json({ data });
 }
 
 async function updateReservationStatus(req, res) {
@@ -251,5 +277,23 @@ module.exports = {
     statusIsNotUnknown,
     statusIsNotFinished,
     asyncErrorBoundary(updateReservationStatus),
+  ],
+  edit: [
+    asyncErrorBoundary(reservationExists),
+    bodyDataHas("first_name"),
+    bodyDataHas("last_name"),
+    bodyDataHas("mobile_number"),
+    bodyDataHas("reservation_date"),
+    bodyDataHas("reservation_time"),
+    bodyDataHas("people"),
+    dateIsValid,
+    timeIsValid,
+    peopleIsInt,
+    dateIsOnDayOpenForBusiness,
+    timeIsAfterOpening,
+    timeIsHourBeforeClosing,
+    dateAndTimeInFuture,
+    reservationStatusIsBooked,
+    asyncErrorBoundary(edit),
   ],
 };

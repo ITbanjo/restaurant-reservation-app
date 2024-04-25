@@ -12,15 +12,15 @@ import { useHistory } from "react-router-dom";
  *  the date for which the user wants to view reservations.
  * @returns {JSX.Element}
  */
-function Dashboard({ date }) {
-  const [reservations, setReservations] = useState([]);
+function Dashboard({ date, reservations, setReservations }) {
+  //const [reservations, setReservations] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
   const [tables, setTables] = useState([]);
   const [tablesError, setTablesError] = useState(null);
   const history = useHistory();
   const dashboardDate = new Date(date).toLocaleDateString("en-us", {
     timeZone: "UTC",
-    weekday: "long",
+    weekday: "short",
     year: "numeric",
     month: "short",
     day: "numeric",
@@ -101,6 +101,9 @@ function Dashboard({ date }) {
             reservations={reservations}
             tables={tables}
             loadDashboard={loadDashboard}
+            setReservations={setReservations}
+            setReservationsError={setReservationsError}
+            date={date}
           />
         </div>
         <div className="w-100">
