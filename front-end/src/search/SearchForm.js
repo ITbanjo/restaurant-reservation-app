@@ -20,7 +20,7 @@ function SearchForm({
     event.preventDefault();
     const abortController = new AbortController();
     try {
-      const list = await listReservations(phoneNumber);
+      const list = await listReservations(phoneNumber, abortController.signal);
       setReservations(list);
       setShowList(true);
     } catch (error) {
@@ -32,21 +32,23 @@ function SearchForm({
   return (
     <div>
       <ErrorAlert error={searchError} />
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="col-md-6">
         <div className="form-group">
-          <label for="search">Search</label>
-          <input
-            id="search"
-            value={phoneNumber.mobile_number}
-            name="mobile_number"
-            type="tel"
-            className="form-control"
-            onChange={handleChange}
-          ></input>
+          <label for="search">Phone Number</label>
+          <div className="d-flex flex-row">
+            <button type="submit" className="btn btn-dark mr-2">
+              Find
+            </button>
+            <input
+              id="search"
+              value={phoneNumber.mobile_number}
+              name="mobile_number"
+              type="tel"
+              className="form-control"
+              onChange={handleChange}
+            ></input>
+          </div>
         </div>
-        <button type="submit" className="btn btn-primary mb-3">
-          Find
-        </button>
       </form>
     </div>
   );

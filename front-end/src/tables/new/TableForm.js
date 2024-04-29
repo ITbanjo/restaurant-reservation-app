@@ -23,15 +23,16 @@ function TableForm({ emptyTableData, newTable, setNewTable }) {
 
   async function handleSubmit(event) {
     event.preventDefault();
+    const abortController = new AbortController();
     setNewTableError(null);
     try {
-      await createTable(newTable);
-      setNewTable(emptyTableData);
+      await createTable(newTable, abortController.signal);
       history.push(`/dashboard`);
     } catch (error) {
       setNewTableError(error);
       throw error;
     }
+    return () => abortController.abort();
   }
 
   function handleCancel() {
@@ -49,7 +50,6 @@ function TableForm({ emptyTableData, newTable, setNewTable }) {
             id="table_name"
             value={newTable.table_name}
             name="table_name"
-            placeholder="Table Name"
             className="form-control"
             onChange={handleChange}
           ></input>
@@ -61,7 +61,6 @@ function TableForm({ emptyTableData, newTable, setNewTable }) {
             value={newTable.capacity}
             name="capacity"
             type="number"
-            placeholder="capacity"
             className="form-control"
             onChange={handleChange}
           ></input>

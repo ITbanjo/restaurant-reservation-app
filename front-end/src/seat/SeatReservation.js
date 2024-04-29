@@ -8,7 +8,6 @@ function SeatReservation() {
   const { reservation_id } = useParams();
   const [tables, setTables] = useState([]);
   const [reservation, setReservation] = useState({});
-  //const [seatReservationError, setSeatReservationError] = useState(null);
   const [seatError, setSeatError] = useState(null);
 
   useEffect(loadSeatReservation, []);
@@ -36,8 +35,8 @@ function SeatReservation() {
 
   if (tables.length) {
     return (
-      <>
-        <h1 className="mt-3">Seat Reservation</h1>
+      <div className="col-md-6">
+        <h3 className="mt-3">Seat Reservation</h3>
         <ErrorAlert error={seatError} />
         <div>
           <SeatOptions
@@ -46,7 +45,7 @@ function SeatReservation() {
             setSeatError={setSeatError}
           />
         </div>
-      </>
+      </div>
     );
   } else {
     return <h4>Loading...</h4>;

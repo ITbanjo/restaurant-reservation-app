@@ -1,23 +1,20 @@
 const knex = require("../db/connection");
 
 function getReservationsForSpecifiedDate(date) {
-  return (
-    knex("reservations")
-      .select(
-        "reservation_id",
-        "first_name",
-        "last_name",
-        "mobile_number",
-        "reservation_date",
-        "reservation_time",
-        "people",
-        "status"
-      )
-      .whereNotIn("status", ["finished", "cancelled"])
-      .andWhere("reservation_date", date)
-      //.andWhere("status", "<>", "finished")
-      .orderBy("reservation_time")
-  );
+  return knex("reservations")
+    .select(
+      "reservation_id",
+      "first_name",
+      "last_name",
+      "mobile_number",
+      "reservation_date",
+      "reservation_time",
+      "people",
+      "status"
+    )
+    .whereNotIn("status", ["finished", "cancelled"])
+    .andWhere("reservation_date", date)
+    .orderBy("reservation_time");
 }
 
 function searchReservationsForSpecifiedPhoneNumber(mobile_number) {

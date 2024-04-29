@@ -1,10 +1,6 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
-import {
-  createReservation,
-  editReservation,
-  listReservations,
-} from "../../utils/api";
+import { createReservation, editReservation } from "../../utils/api";
 import ErrorAlert from "../../layout/ErrorAlert";
 import { asDateAndTimeStringObj } from "../../utils/date-time";
 import formatPhoneNumber from "../../utils/format-phone-number";
@@ -82,7 +78,6 @@ function ReservationForm({
             id="first_name"
             value={first_name}
             name="first_name"
-            placeholder="First Name"
             className="form-control"
             onChange={handleChange}
           ></input>
@@ -93,7 +88,6 @@ function ReservationForm({
             id="last_name"
             value={last_name}
             name="last_name"
-            placeholder="Last Name"
             className="form-control"
             onChange={handleChange}
           ></input>
@@ -144,7 +138,6 @@ function ReservationForm({
             value={people}
             name="people"
             type="number"
-            placeholder="Number of Guests"
             className="form-control"
             onChange={handleChange}
           ></input>

@@ -47,30 +47,37 @@ function Reservation({
   }
 
   async function modalFinish() {
+    const abortController = new AbortController();
     try {
       const modalMsg = `Is this table ready to seat new guests? This cannot be undone.`;
       const result = window.confirm(modalMsg);
       if (result) {
-        await finishReservation(table.table_id);
+        await finishReservation(table.table_id, abortController.signal);
         await loadDashboard();
       }
     } catch (error) {
       setReservationsError(error);
     }
+    return () => abortController.abort();
   }
 
   async function modalCancel() {
+    const abortController = new AbortController();
     try {
       const modalMsg = `Do you want to cancel this reservation? This cannot be undone.`;
       const result = window.confirm(modalMsg);
       if (result) {
         await updateReservationStatus(reservation_id, { status: "cancelled" });
-        const list = await listReservations(date ? { date } : phoneNumber); //If cancelled from /dashboard, list reservations by date, else list by phoneNumber for /search
+        const list = await listReservations(
+          date ? { date } : phoneNumber, //If cancelled from /dashboard, list reservations by date, else list by phoneNumber for /search
+          abortController.signal
+        );
         setReservations(list);
       }
     } catch (error) {
       setReservationsError(error);
     }
+    return () => abortController.abort();
   }
 
   function displayStatus() {
@@ -89,9 +96,9 @@ function Reservation({
   }
 
   function displayButton() {
-    return table ? ( //if reservation_id is associated with a table, display finish button --- This method make sure frontend tests "5" passes
+    return table ? ( //if reservation_id is associated with a table, display finish button --- This makes sure frontend tests "5" passes
       <button
-        className="btn btn-danger btn-lg mr-2"
+        className="btn btn-danger mr-2"
         onClick={modalFinish}
         data-table-id-finish={table.table_id}
       >
@@ -99,7 +106,7 @@ function Reservation({
       </button>
     ) : (
       <a href={`/reservations/${reservation_id}/seat`}>
-        <button className="btn btn-success btn-lg mr-2">Seat</button>
+        <button className="btn btn-success mr-2">Seat</button>
       </a>
     );
   }
@@ -109,9 +116,7 @@ function Reservation({
       <div className="card-body">
         <div className="d-flex justify-content-between">
           <h4 className="card-title font-weight-bold">
-            {phoneNumber
-              ? `${timeFormatter(reservation_time)} - ${formattedDate}`
-              : timeFormatter(reservation_time)}
+            {timeFormatter(reservation_time)}
           </h4>
           <h4
             className="card-title font-weight-bold"
@@ -120,6 +125,11 @@ function Reservation({
             {displayStatus()}
           </h4>
         </div>
+        {phoneNumber && (
+          <p>
+            Date: <span className="font-weight-bold">{formattedDate}</span>
+          </p>
+        )}
         <p>
           Name:{" "}
           <span className="font-weight-bold">
@@ -135,10 +145,10 @@ function Reservation({
         <div>
           {phoneNumber ? "" : displayButton()}
           <a href={`/reservations/${reservation_id}/edit`}>
-            <button className="btn btn-primary btn-lg mr-2">Edit</button>
+            <button className="btn btn-dark mr-2">Edit</button>
           </a>
           <button
-            className="btn btn-warning btn-lg"
+            className="btn btn-dark"
             data-reservation-id-cancel={reservation_id}
             onClick={modalCancel}
           >

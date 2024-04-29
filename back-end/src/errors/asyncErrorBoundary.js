@@ -1,3 +1,6 @@
+/*
+  Handles errors from async middleware functions
+*/
 function asyncErrorBoundary(delegate, defaultStatus) {
   return (request, response, next) => {
     Promise.resolve()

@@ -1,7 +1,8 @@
 const service = require("./reservations.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 
-//input validation functions
+// input validation functions
+
 function bodyDataHas(propertyName) {
   return function (req, res, next) {
     const { data = {} } = req.body;
@@ -97,7 +98,7 @@ function dateAndTimeInFuture(req, res, next) {
   const {
     data: {
       reservation_date,
-      currentDate = "2024-04-18",
+      currentDate = "2024-04-18", // Current date/time default values set so that backend tests will pass.
       currentTime = "12:00",
     } = {},
   } = req.body;
@@ -117,7 +118,7 @@ function dateAndTimeInFuture(req, res, next) {
     if (resHours === todayHours && resMinutes > todayMinutes) return next();
     next({
       status: 400,
-      message: `Reservation_time cannot be a past time. Please choose a future time. reservation_date=${reservation_date} todayDate=${currentDate} resHoursMins=${resHours}:${resMinutes} todayHoursMins=${todayHours}:${todayMinutes}`,
+      message: `Reservation_time cannot be a past time. Please choose a future time.`,
     });
   }
   next({
@@ -176,7 +177,8 @@ function statusIsNotFinished(req, res, next) {
   return next();
 }
 
-//middleware functions
+// middleware functions
+
 async function listForSpecifiedDateOrPhoneNumber(req, res) {
   const date = req.query.date;
   const phoneNumber = req.query.mobile_number;
@@ -208,18 +210,19 @@ async function create(req, res) {
     } = {},
   } = req.body;
   const newReservation = {
-    first_name: first_name,
-    last_name: last_name,
-    mobile_number: mobile_number,
-    reservation_date: reservation_date,
-    reservation_time: reservation_time,
-    people: people,
+    first_name,
+    last_name,
+    mobile_number,
+    reservation_date,
+    reservation_time,
+    people,
   };
   const create = await service.create(newReservation);
   res.status(201).json({ data: create[0] });
 }
 
 async function edit(req, res) {
+  const { reservation_id } = res.locals.reservation;
   const {
     data: {
       first_name,
@@ -231,20 +234,22 @@ async function edit(req, res) {
     } = {},
   } = req.body;
   const updatedReservation = {
-    ...res.locals.reservation,
-    first_name: first_name,
-    last_name: last_name,
-    mobile_number: mobile_number,
-    reservation_date: reservation_date,
-    reservation_time: reservation_time,
-    people: people,
+    first_name,
+    last_name,
+    mobile_number,
+    reservation_date,
+    reservation_time,
+    people,
+    reservation_id,
   };
   const data = await service.edit(updatedReservation);
   res.json({ data });
 }
 
 async function updateReservationStatus(req, res) {
-  const { data: { status = "booked" } = {} } = req.body;
+  const {
+    data: { status = "booked" },
+  } = req.body;
   const { reservation_id } = req.params;
   const data = await service.updateReservationStatus(reservation_id, status);
   res.status(200).json({ data });

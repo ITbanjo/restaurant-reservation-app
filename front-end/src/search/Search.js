@@ -25,7 +25,7 @@ function Search({ reservations, setReservations }) {
 
   return (
     <div>
-      <h1 className="mt-3">Search</h1>
+      <h3 className="col-md-6 mt-3">Search</h3>
       <SearchForm
         setReservations={setReservations}
         setPhoneNumber={setPhoneNumber}
