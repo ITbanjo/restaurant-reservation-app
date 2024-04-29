@@ -1,6 +1,7 @@
 import React from "react";
 import { listReservations } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
+import formatPhoneNumber from "../utils/format-phone-number";
 
 function SearchForm({
   setReservations,
@@ -12,7 +13,7 @@ function SearchForm({
 }) {
   function handleChange(event) {
     setPhoneNumber({
-      [event.target.name]: event.target.value,
+      [event.target.name]: formatPhoneNumber(event.target.value),
     });
   }
 
@@ -32,7 +33,7 @@ function SearchForm({
   return (
     <div>
       <ErrorAlert error={searchError} />
-      <form onSubmit={handleSubmit} className="col-md-6">
+      <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label for="search">Phone Number</label>
           <div className="d-flex flex-row">
@@ -44,6 +45,7 @@ function SearchForm({
               value={phoneNumber.mobile_number}
               name="mobile_number"
               type="tel"
+              maxLength={14}
               className="form-control"
               onChange={handleChange}
             ></input>

@@ -55,7 +55,7 @@ function peopleIsInt(req, res, next) {
 
 function dateIsOnDayOpenForBusiness(req, res, next) {
   const { data: { reservation_date } = {} } = req.body;
-  const weekdayName = new Date(reservation_date).toUTCString().slice(0, 3);
+  const weekdayName = new Date(reservation_date).toUTCString().slice(0, 3); // Gets weekday name from date
 
   if (weekdayName != "Tue") {
     return next();
@@ -68,8 +68,8 @@ function dateIsOnDayOpenForBusiness(req, res, next) {
 
 function timeIsAfterOpening(req, res, next) {
   const { data: { reservation_time } = {} } = req.body;
-  const resHours = Number(reservation_time.slice(0, 2));
-  const resMinutes = Number(reservation_time.slice(3, 5));
+  const resHours = Number(reservation_time.slice(0, 2)); // Extracts Hours as int
+  const resMinutes = Number(reservation_time.slice(3, 5)); // Extracts Minutes as int
   res.locals.resHours = resHours;
   res.locals.resMinutes = resMinutes;
 
@@ -104,11 +104,11 @@ function dateAndTimeInFuture(req, res, next) {
   } = req.body;
   const { resHours, resMinutes } = res.locals;
 
-  const todayValue = Date.parse(currentDate);
+  const todayValue = Date.parse(currentDate); // currentDate is captured and sent from the front-end
   const resDateValue = Date.parse(reservation_date);
 
-  const todayHours = Number(currentTime.slice(0, 2));
-  const todayMinutes = Number(currentTime.slice(3, 5));
+  const todayHours = Number(currentTime.slice(0, 2)); // Extracts hours as int
+  const todayMinutes = Number(currentTime.slice(3, 5)); // Extracts minutes as int
 
   if (resDateValue > todayValue) {
     return next();
@@ -182,6 +182,7 @@ function statusIsNotFinished(req, res, next) {
 async function listForSpecifiedDateOrPhoneNumber(req, res) {
   const date = req.query.date;
   const phoneNumber = req.query.mobile_number;
+  // If date is present in req.query get reservations by specified date - If phoneNumber then return reservations by phone number
   if (date) {
     res.json({ data: await service.getReservationsForSpecifiedDate(date) });
   }
