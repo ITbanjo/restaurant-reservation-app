@@ -11,7 +11,7 @@ function TableForm({ emptyTableData, newTable, setNewTable }) {
     if (event.target.name === "capacity") {
       setNewTable({
         ...newTable,
-        [event.target.name]: Number(event.target.value),
+        [event.target.name]: Number(event.target.value), // Set capacity to save as int
       });
     } else {
       setNewTable({

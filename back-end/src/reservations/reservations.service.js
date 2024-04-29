@@ -21,7 +21,7 @@ function searchReservationsForSpecifiedPhoneNumber(mobile_number) {
   return knex("reservations")
     .whereRaw(
       "translate(mobile_number, '() -', '') like ?",
-      `%${mobile_number.replace(/\D/g, "")}%`
+      `%${mobile_number.replace(/\D/g, "")}%` // Enables search with partial or full phone number
     )
     .orderBy("reservation_date");
 }

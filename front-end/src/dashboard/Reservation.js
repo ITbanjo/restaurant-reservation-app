@@ -25,15 +25,16 @@ function Reservation({
     status,
   } = reservation;
 
-  const table = tables.find((table) => table.reservation_id === reservation_id);
+  const table = tables.find((table) => table.reservation_id === reservation_id); // Stores table that reservation is seated at
   const formattedDate = new Date(reservation_date).toLocaleDateString("en-us", {
     timeZone: "UTC",
     weekday: "short",
     year: "numeric",
     month: "short",
     day: "numeric",
-  });
+  }); // Formats the reservation_date for the dashboard view
 
+  // takes time in 24hr format and outputs 12hr - HH:MM
   function timeFormatter(time) {
     const hours = time.substr(0, 2);
     const minutes = time.substr(3, 2);
@@ -96,7 +97,7 @@ function Reservation({
   }
 
   function displayButton() {
-    return table ? ( //if reservation_id is associated with a table, display finish button --- This makes sure frontend tests "5" passes
+    return table ? ( // If reservation is seated, display finish button - (if reservation_id is found to be associated with a table)
       <button
         className="btn btn-danger mr-2"
         onClick={modalFinish}

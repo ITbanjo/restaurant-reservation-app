@@ -48,7 +48,7 @@ function SeatReservation() {
       </div>
     );
   } else {
-    return <h4>Loading...</h4>;
+    return <h4>Loading...</h4>; // Placeholder while API calls complete
   }
 }
 

@@ -77,7 +77,7 @@ function tableIsNotOccupied(req, res, next) {
 
 async function reservationExists(req, res, next) {
   const { data: { reservation_id } = {} } = req.body;
-  const reservation = await reservationsService.read(reservation_id);
+  const reservation = await reservationsService.read(reservation_id); // Uses reservation service query to get reservation
   if (reservation) {
     res.locals.reservation = reservation;
     return next();
