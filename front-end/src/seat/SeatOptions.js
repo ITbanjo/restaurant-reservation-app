@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { seatReservationWithTable } from "../utils/api";
-import ErrorAlert from "../layout/ErrorAlert";
 
 function SeatOptions({ tables, reservation, setSeatError }) {
   const [selectedTable, setSelectedTable] = useState(tables[0]);
-  //const [seatError, setSeatError] = useState(null);
   const history = useHistory();
 
   function handleChange(event) {
@@ -15,33 +13,42 @@ function SeatOptions({ tables, reservation, setSeatError }) {
   }
 
   async function handleSubmit(event) {
+    const abortController = new AbortController();
     event.preventDefault();
     setSeatError(null);
     try {
-      await seatReservationWithTable(selectedTable.table_id, {
-        reservation_id: reservation.reservation_id,
-      });
+      await seatReservationWithTable(
+        selectedTable.table_id,
+        {
+          reservation_id: reservation.reservation_id,
+        },
+        abortController.signal
+      );
       history.push(`/dashboard`);
     } catch (error) {
       setSeatError(error);
     }
+    return () => abortController.abort();
   }
 
   return (
-    <div>
-      <p>"Table Name" - "Capacity"</p>
-      <form onSubmit={handleSubmit} className="d-flex align-items-center">
-        <select name="table_id" onChange={handleChange} className="p-1">
-          {tables.map((table) => (
-            <option value={table.table_id}>
-              {table.table_name} - {table.capacity}
-            </option>
-          ))}
-        </select>
-        <button type="submit" className="btn btn-dark btn-sm ml-1">
+    <div className="input-group">
+      <select name="table_id" onChange={handleChange} className="custom-select">
+        {tables.map((table) => (
+          <option value={table.table_id}>
+            {table.table_name} - {table.capacity}
+          </option>
+        ))}
+      </select>
+      <div className="input-group-append">
+        <button
+          type="submit"
+          onClick={handleSubmit}
+          className="btn btn-secondary"
+        >
           Submit
         </button>
-      </form>
+      </div>
     </div>
   );
 }

@@ -26,12 +26,13 @@ export function asTimeString(date) {
     .padStart(2, "0")}`;
 }
 
+// Takes a date and returns and object with Date (as string) and Time (as string)
 export function asDateAndTimeStringObj(date) {
   const currentDate = asDateString(date);
   const currentTime = asTimeString(date);
   return {
-    currentDate: currentDate,
-    currentTime: currentTime,
+    currentDate,
+    currentTime,
   };
 }
 

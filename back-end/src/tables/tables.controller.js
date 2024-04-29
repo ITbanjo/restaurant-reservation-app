@@ -2,6 +2,8 @@ const service = require("./tables.service");
 const reservationsService = require("../reservations/reservations.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 
+// Input validation functions
+
 function bodyDataHas(propertyName) {
   return function (req, res, next) {
     const { data = {} } = req.body;
@@ -50,18 +52,16 @@ function capacityGreaterThanZero(req, res, next) {
   });
 }
 
-async function tableHasSufficientCapacity(req, res, next) {
-  const table = await service.read(req.params.table_id);
-  res.locals.table = table;
-  const reservation = await reservationsService.read(
-    res.locals.reservation.reservation_id
-  );
-  if (table.capacity >= reservation.people) {
+function tableHasSufficientCapacity(req, res, next) {
+  const { capacity, table_name } = res.locals.table;
+  const { people } = res.locals.reservation;
+
+  if (capacity >= people) {
     return next();
   }
   next({
     status: 400,
-    message: `Table: ${table.table_name} has a capacity of ${table.capacity}, and cannot seat ${reservation.people} people.`,
+    message: `Table: ${table_name} has a capacity of ${capacity}, and cannot seat ${people} people.`,
   });
 }
 
@@ -77,7 +77,7 @@ function tableIsNotOccupied(req, res, next) {
 
 async function reservationExists(req, res, next) {
   const { data: { reservation_id } = {} } = req.body;
-  const reservation = await reservationsService.read(reservation_id);
+  const reservation = await reservationsService.read(reservation_id); // Uses reservation service query to get reservation
   if (reservation) {
     res.locals.reservation = reservation;
     return next();
@@ -121,6 +121,8 @@ function tableNotSeated(req, res, next) {
   }
   return next();
 }
+
+// Middleware functions
 
 async function list(req, res) {
   res.json({ data: await service.getTables() });
@@ -171,7 +173,7 @@ module.exports = {
     bodyDataHas("reservation_id"),
     asyncErrorBoundary(reservationExists),
     asyncErrorBoundary(tableExists),
-    asyncErrorBoundary(tableHasSufficientCapacity),
+    tableHasSufficientCapacity,
     tableIsNotOccupied,
     tableNotSeated,
     asyncErrorBoundary(updateTableSeat),

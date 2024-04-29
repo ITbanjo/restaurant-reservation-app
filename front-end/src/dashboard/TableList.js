@@ -3,8 +3,8 @@ import Table from "./Table";
 
 function TableList({ tables }) {
   return tables.length ? (
-    <table class="table border">
-      <thead class="thead-light">
+    <table class="table border table-striped">
+      <thead>
         <tr>
           <th scope="col">Table</th>
           <th scope="col">Capacity</th>

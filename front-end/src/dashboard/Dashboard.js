@@ -13,7 +13,6 @@ import { useHistory } from "react-router-dom";
  * @returns {JSX.Element}
  */
 function Dashboard({ date, reservations, setReservations }) {
-  //const [reservations, setReservations] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
   const [tables, setTables] = useState([]);
   const [tablesError, setTablesError] = useState(null);
@@ -47,6 +46,7 @@ function Dashboard({ date, reservations, setReservations }) {
     return () => abortController.abort();
   }
 
+  // Navigation for dashboard buttons
   function handleClick(event) {
     switch (event.target.id) {
       case "next":
@@ -80,20 +80,22 @@ function Dashboard({ date, reservations, setReservations }) {
 
       <div className="mb-2 ">
         <button
-          className="btn btn-dark mr-2"
+          className="btn btn-secondary mr-2"
           onClick={handleClick}
           id="previous"
         >
           Previous Day
         </button>
-        <button className="btn btn-dark" onClick={handleClick} id="next">
+        <button
+          className="btn btn-secondary mr-2"
+          onClick={handleClick}
+          id="next"
+        >
           Next Day
         </button>
-        <div className="float-right">
-          <button className="btn btn-dark" onClick={handleClick} id="today">
-            Today
-          </button>
-        </div>
+        <button className="btn btn-secondary" onClick={handleClick} id="today">
+          Today
+        </button>
       </div>
       <div className="d-md-flex justify-content-between">
         <div className="w-100 mr-1">

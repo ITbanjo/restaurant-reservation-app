@@ -7,7 +7,11 @@ function Table({ table }) {
       <th scope="row">{table_name}</th>
       <td>{capacity}</td>
       <td data-table-id-status={table_id}>
-        {reservation_id ? "Occupied" : "Free"}
+        {reservation_id ? (
+          <span className="text-danger">Occupied</span>
+        ) : (
+          "Free"
+        )}
       </td>
     </tr>
   );

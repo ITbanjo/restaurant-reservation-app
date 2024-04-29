@@ -1,3 +1,6 @@
+/*
+  Handles unallowed HTTP methods on routes
+*/
 function methodNotAllowed(req, res, next) {
   next({
     status: 405,

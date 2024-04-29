@@ -9,8 +9,8 @@ function CreateTable() {
   const [newTable, setNewTable] = useState(emptyTableData);
 
   return (
-    <div>
-      <h1>Create Table</h1>
+    <div className="col-md-6 mt-3">
+      <h3>Create Table</h3>
       <TableForm
         emptyTableData={emptyTableData}
         newTable={newTable}

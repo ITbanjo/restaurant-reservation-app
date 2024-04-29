@@ -13,8 +13,8 @@ function CreateReservation() {
   const [newReservation, setNewReservation] = useState(emptyReservationData);
 
   return (
-    <div>
-      <h1>Create Reservation</h1>
+    <div className="col-md-6 mt-3">
+      <h3>Create Reservation</h3>
       <ReservationForm
         reservationData={newReservation}
         setReservationData={setNewReservation}

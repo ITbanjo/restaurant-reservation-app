@@ -1,3 +1,5 @@
+// Handles displaying of both invalid date and invalid time errors, simultaneously.
+
 function handleDateErrors(date, backendError) {
   const todayValue = Date.parse(new Date().toUTCString().slice(0, 16));
   const resDateValue = Date.parse(new Date(date).toUTCString().slice(0, 16));
