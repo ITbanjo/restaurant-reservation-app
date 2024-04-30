@@ -76,6 +76,7 @@ function Reservation({
         setReservations(list);
       }
     } catch (error) {
+      console.log(error.message);
       setReservationsError(error);
     }
     return () => abortController.abort();
@@ -110,6 +111,20 @@ function Reservation({
         <button className="btn btn-success mr-2">Seat</button>
       </a>
     );
+  }
+
+  function cancelButton() {
+    if (status === "booked") {
+      return (
+        <button
+          className="btn btn-dark"
+          data-reservation-id-cancel={reservation_id}
+          onClick={modalCancel}
+        >
+          Cancel
+        </button>
+      );
+    }
   }
 
   return (
@@ -148,13 +163,7 @@ function Reservation({
           <a href={`/reservations/${reservation_id}/edit`}>
             <button className="btn btn-dark mr-2">Edit</button>
           </a>
-          <button
-            className="btn btn-dark"
-            data-reservation-id-cancel={reservation_id}
-            onClick={modalCancel}
-          >
-            Cancel
-          </button>
+          {cancelButton()}
         </div>
       </div>
     </div>
