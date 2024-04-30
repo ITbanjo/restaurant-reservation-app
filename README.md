@@ -1,15 +1,14 @@
-
 # Periodic Tables (restaurant-reservation-app)
 
 Periodic Tables is a restaurant reservation application that enables users to create, edit, look-up, fulfill, and cancel reservations.
 
-This is the final capstone project that I completed during my enrollment at the Chegg Skills (Thinkful) coding bootcamp. 
+This is the final capstone project that I completed during my enrollment at the Chegg Skills (Thinkful) coding bootcamp.
 
-Built using React, Bootstrap, Node.js, Knex.js, and Express.js. 
+Built using React, Bootstrap, Node.js, Knex.js, and Express.js.
 
 ## Links
 
-[Deployment](https://restaurant-reservation-app-front-end-ja43.onrender.com) - If the dashboard page throws a fetch error, please allow a minute or two for the back-end server to spin up. 
+[Deployment](https://restaurant-reservation-app-front-end-ja43.onrender.com) - If the dashboard page throws a fetch error, please allow a minute or two for the back-end server to spin up.
 
 [Back-End Server](https://restaurant-reservation-app-back-end-reua.onrender.com)
 
@@ -17,7 +16,7 @@ Built using React, Bootstrap, Node.js, Knex.js, and Express.js.
 
 ### Dashboard
 
-The Dashboard screen lists all reservations for the given date that is selected. By default, the Dashboard shows the current date. 
+The Dashboard screen lists all reservations for the given date that is selected. By default, the Dashboard shows the current date.
 
 Additionally, the Dashboard shows a list of all of the restaurant tables, their capacity, and availability.
 
@@ -28,14 +27,15 @@ Dashboard buttons:
 - Today: Resets the viewed date to the current date
 
 Reservation buttons:
+
 - Seat: Takes you to the Seat Reservation screen, in order to seat the reservation at a table
 - Finish: (Appears after reservation has been seated) Changes table's status from occupied to free, and removes the reservation from the dashboard
 - Edit: Takes you to the Edit Reservation screen, where the info can be altered
 - Cancel: Changes the reservation's status to "cancelled" and removes it from the dashboard screen
 
-![](./src/img/dashboard.png)
+![](./img/dashboard.png)
 
-![](./src/img/dashboard-finish.png)
+![](./img/dashboard-finish.png)
 
 ## Seat Reservation
 
@@ -43,7 +43,7 @@ The Seat Reservation screen contains a dropdown list of restaurant tables, where
 
 (The Seat Reservation screen is accessed by clicking the "seat" button on a reservation at the Dashboard screen.)
 
-![](./src/img/seat.png)
+![](./img/seat.png)
 
 ## Search
 
@@ -53,7 +53,7 @@ When the "Find" button is clicked matching reservations will appear below. If no
 
 This screen shows all matching reservations, regardless of status.
 
-![](./src/img/search.png)
+![](./img/search.png)
 
 ## New Reservation
 
@@ -63,7 +63,7 @@ When the "Submit" button is clicked, the new reservation will be saved, and the 
 
 Clicking cancel will take the user back to the previous page.
 
-![](./src/img/new-reservation.png)
+![](./img/new-reservation.png)
 
 ## Edit Reservation
 
@@ -73,17 +73,17 @@ When the "Submit" button is clicked the edited info will be saved to the reserva
 
 Clicking cancel will take the user back to the previous page.
 
-![](./src/img/edit-reservation.png)
+![](./img/edit-reservation.png)
 
 ## New Table
 
 The New Table screen presents the user with an empty form, in which a table name and capacity can be entered.
 
-When the "Submit" button is clicked, the new table will be saved, and the user will be taken to the Dashboard screen. 
+When the "Submit" button is clicked, the new table will be saved, and the user will be taken to the Dashboard screen.
 
 Clicking cancel will take the user back to the previous page.
 
-![](./src/img/new-table.png)
+![](./img/new-table.png)
 
 ### Install
 
@@ -102,4 +102,3 @@ npm start
 - `npm test` runs all tests.
 - `npm run test:backend` runs all backend tests.
 - `npm run test:frontend` runs all frontend tests.
-
