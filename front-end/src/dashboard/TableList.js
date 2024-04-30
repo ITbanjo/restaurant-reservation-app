@@ -1,19 +1,24 @@
 import React from "react";
 import Table from "./Table";
 
-function TableList({ tables }) {
+function TableList({ tables, setTablesError, loadDashboard }) {
   return tables.length ? (
     <table class="table border table-striped">
       <thead>
         <tr>
           <th scope="col">Table</th>
           <th scope="col">Capacity</th>
-          <th scope="col">Availablility</th>
+          <th scope="col">Availability</th>
+          <th scope="col"></th>
         </tr>
       </thead>
       <tbody>
         {tables.map((table) => (
-          <Table table={table} />
+          <Table
+            table={table}
+            setTablesError={setTablesError}
+            loadDashboard={loadDashboard}
+          />
         ))}
       </tbody>
     </table>

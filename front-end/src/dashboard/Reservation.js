@@ -1,14 +1,9 @@
 import React from "react";
-import {
-  updateReservationStatus,
-  finishReservation,
-  listReservations,
-} from "../utils/api";
+import { updateReservationStatus, listReservations } from "../utils/api";
 
 function Reservation({
   reservation,
   tables,
-  loadDashboard,
   phoneNumber,
   setReservations,
   setReservationsError,
@@ -47,21 +42,6 @@ function Reservation({
     return `${Number(hours) - 12}:${minutes} PM`;
   }
 
-  async function modalFinish() {
-    const abortController = new AbortController();
-    try {
-      const modalMsg = `Is this table ready to seat new guests? This cannot be undone.`;
-      const result = window.confirm(modalMsg);
-      if (result) {
-        await finishReservation(table.table_id, abortController.signal);
-        await loadDashboard();
-      }
-    } catch (error) {
-      setReservationsError(error);
-    }
-    return () => abortController.abort();
-  }
-
   async function modalCancel() {
     const abortController = new AbortController();
     try {
@@ -76,7 +56,6 @@ function Reservation({
         setReservations(list);
       }
     } catch (error) {
-      console.log(error.message);
       setReservationsError(error);
     }
     return () => abortController.abort();
@@ -98,18 +77,12 @@ function Reservation({
   }
 
   function displayButton() {
-    return table ? ( // If reservation is seated, display finish button - (if reservation_id is found to be associated with a table)
-      <button
-        className="btn btn-danger mr-2"
-        onClick={modalFinish}
-        data-table-id-finish={table.table_id}
-      >
-        Finish
-      </button>
-    ) : (
-      <a href={`/reservations/${reservation_id}/seat`}>
-        <button className="btn btn-success mr-2">Seat</button>
-      </a>
+    return (
+      !table && ( // If reservation is seated (reservation_id associated with a table) then don't show "Seat" button
+        <a href={`/reservations/${reservation_id}/seat`}>
+          <button className="btn btn-success mr-2">Seat</button>
+        </a>
+      )
     );
   }
 
