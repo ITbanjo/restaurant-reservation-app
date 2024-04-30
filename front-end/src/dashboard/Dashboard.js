@@ -102,14 +102,17 @@ function Dashboard({ date, reservations, setReservations }) {
           <ReservationList
             reservations={reservations}
             tables={tables}
-            loadDashboard={loadDashboard}
             setReservations={setReservations}
             setReservationsError={setReservationsError}
             date={date}
           />
         </div>
         <div className="w-100">
-          <TableList tables={tables} />
+          <TableList
+            tables={tables}
+            setTablesError={setTablesError}
+            loadDashboard={loadDashboard}
+          />
         </div>
       </div>
     </main>

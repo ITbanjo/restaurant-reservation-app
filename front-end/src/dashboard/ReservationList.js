@@ -14,7 +14,6 @@ function ReservationList({
       <Reservation
         reservation={reservation}
         tables={tables}
-        loadDashboard={loadDashboard}
         setReservations={setReservations}
         setReservationsError={setReservationsError}
         date={date}
